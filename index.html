@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4a7c59">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <title>健康小记</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js">
+    </script>
+    <style>
+        /* ===== 全局重置 & 基础 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f0eb;
+            color: #3d3d3d;
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+        /* ===== 顶部 ===== */
+        .header {
+            max-width: 720px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #4a4a4a;
+            letter-spacing: 2px;
+        }
+        .header .sub {
+            font-size: 13px;
+            color: #999;
+        }
+        /* ===== Tab 导航 ===== */
+        .tabs {
+            max-width: 720px;
+            margin: 0 auto 16px;
+            display: flex;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+        .tabs button {
+            flex: 1;
+            padding: 14px 0;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 500;
+            color: #999;
+            cursor: pointer;
+            transition: all 0.25s;
+            position: relative;
+        }
+        .tabs button.active {
+            color: #4a7c59;
+            background: #f8fbf6;
+        }
+        .tabs button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            width: 60%;
+            height: 3px;
+            background: #4a7c59;
+            border-radius: 3px 3px 0 0;
+        }
+        .tabs button:hover {
+            background: #fafafa;
+        }
+
+        /* ===== 卡片容器 ===== */
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+
+        /* ===== 卡片通用 ===== */
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px 22px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        }
+        .card-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-title .icon {
+            font-size: 20px;
+        }
+
+        /* ===== 表单元素 ===== */
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px 12px;
+            margin-bottom: 12px;
+        }
+        .form-row label {
+            font-size: 14px;
+            color: #666;
+            min-width: 70px;
+            flex-shrink: 0;
+        }
+        .form-row .label-wide {
+            min-width: 100px;
+        }
+        .form-row input[type="time"],
+        .form-row input[type="number"],
+        .form-row input[type="text"],
+        .form-row select {
+            padding: 8px 12px;
+            border: 1.5px solid #e8e0d8;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fcfaf8;
+            color: #3d3d3d;
+            outline: none;
+            transition: border 0.2s;
+            min-width: 100px;
+        }
+        .form-row input[type="time"]:focus,
+        .form-row input[type="number"]:focus,
+        .form-row input[type="text"]:focus,
+        .form-row select:focus {
+            border-color: #4a7c59;
+            background: #fff;
+        }
+        .form-row input[type="number"] {
+            width: 80px;
+        }
+        .form-row input[type="text"] {
+            flex: 1;
+            min-width: 140px;
+        }
+        .form-row select {
+            min-width: 82px;
+            width: 90px;
+            cursor: pointer;
+        }
+        .form-row .unit {
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        /* 小提示 */
+        .calc-hint {
+            font-size: 14px;
+            color: #4a7c59;
+            font-weight: 500;
+            background: #f0f7ee;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        /* ===== 运动分次记录 ===== */
+        .ex-session {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            padding: 8px 12px;
+            background: #fcfaf8;
+            border-radius: 12px;
+            border: 1px solid #f0ebe5;
+        }
+        .ex-session .session-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #888;
+            min-width: 44px;
+        }
+        .ex-session select {
+            padding: 6px 10px;
+            border: 1.5px solid #e8e0d8;
+            border-radius: 10px;
+            font-size: 13px;
+            background: #fff;
+            outline: none;
+            cursor: pointer;
+            min-width: 76px;
+        }
+        .ex-session select:focus {
+            border-color: #4a7c59;
+        }
+        .ex-session input[type="number"] {
+            width: 64px;
+            padding: 6px 10px;
+            border: 1.5px solid #e8e0d8;
+            border-radius: 10px;
+            font-size: 13px;
+            background: #fff;
+            outline: none;
+        }
+        .ex-session input[type="number"]:focus {
+            border-color: #4a7c59;
+        }
+        .ex-session .close-btn {
+            border: none;
+            background: transparent;
+            color: #ccc;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0 4px;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        .ex-session .close-btn:hover {
+            color: #e87171;
+        }
+        .ex-add-btn {
+            padding: 6px 18px;
+            border: 1.5px dashed #c8c0b6;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #999;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 4px;
+        }
+        .ex-add-btn:hover {
+            border-color: #4a7c59;
+            color: #4a7c59;
+            background: #f8fbf6;
+        }
+        .ex-add-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* ===== 饮食 (带感受) ===== */
+        .diet-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .diet-row .meal-label {
+            min-width: 48px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            line-height: 34px;
+        }
+        .toggle-btn {
+            padding: 4px 12px;
+            border: 1.5px solid #e8e0d8;
+            border-radius: 16px;
+            font-size: 13px;
+            cursor: pointer;
+            background: #fcfaf8;
+            transition: all 0.2s;
+            user-select: none;
+            line-height: 22px;
+            margin-top: 4px;
+        }
+        .toggle-btn.active {
+            background: #e8f3e4;
+            border-color: #4a7c59;
+            color: #4a7c59;
+        }
+        .diet-input-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            min-width: 160px;
+        }
+        .diet-input-wrap input[type="text"] {
+            padding: 7px 12px;
+            border: 1.5px solid #e8e0d8;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fcfaf8;
+            outline: none;
+            transition: border 0.2s;
+            width: 100%;
+        }
+        .diet-input-wrap input[type="text"]:focus {
+            border-color: #4a7c59;
+        }
+        .diet-input-wrap input[type="text"]:disabled {
+            background: #f5f0eb;
+            color: #bbb;
+        }
+        .diet-feeling {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .diet-feeling label {
+            font-size: 12px;
+            color: #aaa;
+            white-space: nowrap;
+        }
+        .diet-feeling input[type="text"] {
+            flex: 1;
+            padding: 5px 10px;
+            border: 1.5px solid #ede8e2;
+            border-radius: 8px;
+            font-size: 13px;
+            background: #fcfaf8;
+            outline: none;
+            transition: border 0.2s;
+            min-width: 80px;
+        }
+        .diet-feeling input[type="text"]:focus {
+            border-color: #4a7c59;
+        }
+        .diet-feeling input[type="text"]:disabled {
+            background: #f5f0eb;
+            color: #bbb;
+        }
+
+        /* ===== 文本域 ===== */
+        textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #e8e0d8;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #fcfaf8;
+            outline: none;
+            resize: vertical;
+            min-height: 120px;
+            transition: border 0.2s;
+            color: #3d3d3d;
+        }
+        textarea:focus {
+            border-color: #4a7c59;
+            background: #fff;
+        }
+
+        /* ===== 保存按钮 ===== */
+        .save-area {
+            text-align: center;
+            margin: 8px 0 20px;
+        }
+        .btn-save {
+            padding: 12px 48px;
+            background: #4a7c59;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 4px 14px rgba(74, 124, 89, 0.3);
+        }
+        .btn-save:hover {
+            background: #3d6b4b;
+        }
+        .btn-save:active {
+            transform: scale(0.97);
+        }
+        .save-toast {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #4a7c59;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .save-toast.show {
+            opacity: 1;
+        }
+        .btn-export {
+            margin-left: 12px;
+            padding: 10px 24px;
+            background: transparent;
+            color: #4a7c59;
+            border: 1.5px solid #4a7c59;
+            border-radius: 30px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-export:hover {
+            background: #f0f7ee;
+        }
+        .btn-import-wrap {
+            display: inline-block;
+            position: relative;
+            margin-left: 8px;
+        }
+        .btn-import-wrap input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .btn-import {
+            padding: 10px 24px;
+            background: transparent;
+            color: #4a7c59;
+            border: 1.5px solid #4a7c59;
+            border-radius: 30px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-import:hover {
+            background: #f0f7ee;
+        }
+
+        /* ===== 周总结 ===== */
+        .summary-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .summary-header h2 {
+            font-size: 18px;
+            color: #4a4a4a;
+        }
+        .week-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .week-nav button {
+            border: none;
+            background: #fff;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            transition: background 0.2s;
+            color: #555;
+        }
+        .week-nav button:hover {
+            background: #f0f7ee;
+        }
+        .week-nav .week-label {
+            font-size: 14px;
+            color: #888;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .chart-wrap {
+            margin: 12px 0 16px;
+            padding: 6px;
+            position: relative;
+            height: 200px;
+        }
+        .chart-wrap.tall {
+            height: 200px;
+        }
+
+        .summary-notes {
+            margin-top: 8px;
+            padding: 12px 16px;
+            background: #f8f6f3;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.7;
+            color: #555;
+        }
+        .summary-notes strong {
+            color: #4a4a4a;
+        }
+        .summary-stat {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 8px 0 12px;
+        }
+        .stat-item {
+            flex: 1;
+            min-width: 100px;
+            background: #f8f6f3;
+            border-radius: 12px;
+            padding: 10px 14px;
+            text-align: center;
+        }
+        .stat-item .num {
+            font-size: 22px;
+            font-weight: 700;
+            color: #4a7c59;
+        }
+        .stat-item .label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .no-data-msg {
+            text-align: center;
+            padding: 40px 20px;
+            color: #bbb;
+            font-size: 15px;
+        }
+
+        /* ===== 空状态 ===== */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #bbb;
+        }
+        .empty-state .big-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .empty-state p {
+            font-size: 15px;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 500px) {
+            body {
+                padding: 12px;
+                padding-bottom: 60px;
+            }
+            .card {
+                padding: 16px;
+            }
+            .header h1 {
+                font-size: 22px;
+            }
+            .form-row {
+                gap: 6px 8px;
+            }
+            .form-row label {
+                min-width: 60px;
+                font-size: 13px;
+            }
+            .stat-item {
+                min-width: 80px;
+            }
+            .stat-item .num {
+                font-size: 18px;
+            }
+            .btn-export,
+            .btn-import {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            .ex-session {
+                padding: 6px 10px;
+            }
+            .diet-feeling label {
+                font-size: 11px;
+            }
+        }
+
+        /* ===== 滚动条美化 ===== */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d0c8be;
+            border-radius: 3px;
+        }
+
+        /* 日期显示 */
+        .date-display {
+            font-size: 15px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        /* feel-input inline helper */
+        .feel-label-sm {
+            font-size: 12px;
+            color: #aaa;
+            white-space: nowrap;
+        }
+
+        /* ===== 日期导航栏 ===== */
+        .date-nav {
+            max-width: 720px;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .date-nav .nav-arrow {
+            padding: 8px 14px;
+            border: none;
+            background: #fff;
+            border-radius: 22px;
+            font-size: 14px;
+            color: #4a7c59;
+            cursor: pointer;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .date-nav .nav-arrow:hover { background: #f0f7ee; }
+        .date-nav .nav-arrow:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            color: #bbb;
+        }
+        .date-nav .date-label {
+            flex: 1;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+            color: #4a4a4a;
+            white-space: nowrap;
+        }
+        .date-nav .today-btn {
+            padding: 8px 14px;
+            border: none;
+            background: #4a7c59;
+            border-radius: 22px;
+            font-size: 13px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .date-nav .today-btn:hover { background: #3d6b4b; }
+        .date-nav .today-btn.hidden { display: none; }
+
+        /* ===== 周日历导航条 ===== */
+        .week-strip {
+            max-width: 720px;
+            margin: 0 auto 14px;
+            display: flex;
+            gap: 6px;
+        }
+        .week-strip .day-cell {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 8px 2px 10px;
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            user-select: none;
+            min-width: 0;
+        }
+        .week-strip .day-cell:hover { background: #f8fbf6; }
+        .week-strip .day-cell .day-name {
+            font-size: 11px;
+            color: #999;
+            font-weight: 500;
+        }
+        .week-strip .day-cell .day-num {
+            font-size: 15px;
+            font-weight: 600;
+            color: #555;
+        }
+        .week-strip .day-cell .data-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ddd;
+            flex-shrink: 0;
+        }
+        .week-strip .day-cell.has-data .data-dot {
+            background: #4a7c59;
+        }
+        .week-strip .day-cell.today {
+            border-color: #4a7c59;
+            background: #f8fbf6;
+        }
+        .week-strip .day-cell.active {
+            background: #4a7c59;
+        }
+        .week-strip .day-cell.active .day-name,
+        .week-strip .day-cell.active .day-num {
+            color: #fff;
+        }
+        .week-strip .day-cell.active .data-dot {
+            background: rgba(255,255,255,0.7);
+        }
+        .week-strip .day-cell.future {
+            opacity: 0.3;
+            cursor: default;
+            pointer-events: none;
+        }
+        .week-strip .day-cell:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== 顶部 ========== -->
+    <div class="header">
+        <div>
+            <h1>🌿 健康小记</h1>
+            <div class="sub">每天3分钟，记录你的健康</div>
+        </div>
+        <div>
+            <button class="btn-export" onclick="exportData()">📥 导出数据</button>
+            <span class="btn-import-wrap">
+                <button class="btn-import">📤 导入</button>
+                <input type="file" accept=".json" onchange="importData(event)">
+            </span>
+        </div>
+    </div>
+
+    <!-- ========== Tab ========== -->
+    <div class="tabs">
+        <button class="active" data-tab="daily" onclick="switchTab('daily')">📝 每日记录</button>
+        <button data-tab="weekly" onclick="switchTab('weekly')">📊 周总结</button>
+    </div>
+
+    <div class="container">
+
+        <!-- ============================================================ -->
+        <!-- ==================== 每日记录页 ============================= -->
+        <!-- ============================================================ -->
+        <div class="page active" id="page-daily">
+
+            <!-- 日期导航栏 -->
+            <div class="date-nav">
+                <button class="nav-arrow" onclick="navigateDay(-1)">← 前一天</button>
+                <span class="date-label" id="dateLabel">--</span>
+                <button class="nav-arrow" id="nextDayBtn" onclick="navigateDay(1)">后一天 →</button>
+                <button class="today-btn hidden" id="todayBtn" onclick="goToToday()">📍 今天</button>
+            </div>
+            <!-- 周日历导航条 -->
+            <div class="week-strip" id="weekStrip"></div>
+
+            <!-- 睡眠 -->
+            <div class="card">
+                <div class="card-title"><span class="icon">😴</span> 睡眠记录</div>
+
+                <div class="form-row">
+                    <label>🛌 上床时间</label>
+                    <input type="time" id="sleepBedtime" value="" oninput="calcSleepDuration()">
+                    <label>🌅 起床时间</label>
+                    <input type="time" id="sleepWakeTime" value="" oninput="calcSleepDuration()">
+                    <span class="calc-hint" id="sleepDurationDisplay">总时长：--</span>
+                </div>
+
+                <div class="form-row">
+                    <label class="label-wide">😴 深度睡眠占比</label>
+                    <input type="number" id="deepSleepPct" min="0" max="100" step="1" placeholder="%">
+                    <span class="unit">%</span>
+                </div>
+
+                <div class="form-row">
+                    <label class="label-wide">👁 夜间清醒次数</label>
+                    <input type="number" id="awakeCount" min="0" max="20" step="1" value="0" placeholder="0">
+                    <span class="unit">次</span>
+                </div>
+
+                <div class="form-row" style="flex-direction:column;align-items:stretch;">
+                    <label>📝 复盘 / 备注</label>
+                    <textarea id="sleepNotes" placeholder="比如：今天为什么清醒次数多？喝了咖啡？压力大？睡眠质量如何？……&#10;写下来，周总结的时候会汇总到一起看。"></textarea>
+                </div>
+            </div>
+
+            <!-- 运动 -->
+            <div class="card">
+                <div class="card-title"><span class="icon">🏃</span> 运动记录</div>
+                <div style="font-size:13px;color:#999;margin:-8px 0 12px;">可以记录多次运动，每次选种类和时长</div>
+
+                <div id="exerciseSessions">
+                    <!-- 由 JS 动态生成 -->
+                </div>
+
+                <button class="ex-add-btn" id="exAddBtn" onclick="addExerciseSession()">＋ 添加一次运动</button>
+            </div>
+
+            <!-- 饮食 -->
+            <div class="card">
+                <div class="card-title"><span class="icon">🍽️</span> 饮食记录</div>
+
+                <div class="diet-row">
+                    <span class="meal-label">🌅 早餐</span>
+                    <span class="toggle-btn active" id="breakfastToggle" onclick="toggleMeal('breakfast')">✅ 吃了</span>
+                    <div class="diet-input-wrap">
+                        <input type="text" id="breakfastContent" placeholder="吃了什么？">
+                        <div class="diet-feeling">
+                            <label>🤔 感受</label>
+                            <input type="text" id="breakfastFeeling" placeholder="比如：饱了、有点胀、清爽……">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="diet-row">
+                    <span class="meal-label">☀️ 午餐</span>
+                    <span class="toggle-btn active" id="lunchToggle" onclick="toggleMeal('lunch')">✅ 吃了</span>
+                    <div class="diet-input-wrap">
+                        <input type="text" id="lunchContent" placeholder="吃了什么？">
+                        <div class="diet-feeling">
+                            <label>🤔 感受</label>
+                            <input type="text" id="lunchFeeling" placeholder="比如：饱了、有点胀、清爽……">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="diet-row">
+                    <span class="meal-label">🌙 晚餐</span>
+                    <span class="toggle-btn active" id="dinnerToggle" onclick="toggleMeal('dinner')">✅ 吃了</span>
+                    <div class="diet-input-wrap">
+                        <input type="text" id="dinnerContent" placeholder="吃了什么？">
+                        <div class="diet-feeling">
+                            <label>🤔 感受</label>
+                            <input type="text" id="dinnerFeeling" placeholder="比如：饱了、有点胀、清爽……">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 保存 -->
+            <div class="save-area">
+                <button class="btn-save" id="saveBtn" onclick="saveDaily()">💾 保存今日记录</button>
+                <div class="save-toast" id="saveToast">✅ 已保存！</div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ==================== 周总结页 ============================== -->
+        <!-- ============================================================ -->
+        <div class="page" id="page-weekly">
+
+            <div class="card">
+                <div class="summary-header">
+                    <h2>📊 本周总结</h2>
+                    <div class="week-nav">
+                        <button onclick="shiftWeek(-1)">‹</button>
+                        <span class="week-label" id="weekLabel">--</span>
+                        <button onclick="shiftWeek(1)">›</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 睡眠总结 -->
+            <div class="card">
+                <div class="card-title"><span class="icon">😴</span> 睡眠周总结</div>
+
+                <div class="summary-stat" id="sleepStats">
+                    <div class="stat-item">
+                        <div class="num" id="statAvgDuration">--</div>
+                        <div class="label">平均睡眠时长</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="num" id="statAvgDeep">--</div>
+                        <div class="label">平均深度睡眠</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="num" id="statAvgAwake">--</div>
+                        <div class="label">平均清醒次数</div>
+                    </div>
+                </div>
+
+                <div class="chart-wrap tall">
+                    <canvas id="sleepDurationChart"></canvas>
+                </div>
+                <div class="chart-wrap tall">
+                    <canvas id="sleepBedtimeChart"></canvas>
+                </div>
+                <div class="chart-wrap tall">
+                    <canvas id="deepSleepChart"></canvas>
+                </div>
+
+                <div class="summary-notes" id="sleepSummaryNotes">
+                    <strong>💬 本周睡眠复盘：</strong><br>
+                    <span id="sleepNotesSummary">暂无数据</span>
+                </div>
+            </div>
+
+            <!-- 运动总结 -->
+            <div class="card">
+                <div class="card-title"><span class="icon">🏃</span> 运动周总结</div>
+
+                <div class="summary-stat">
+                    <div class="stat-item">
+                        <div class="num" id="statExerciseDays">--</div>
+                        <div class="label">运动天数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="num" id="statExAvgDuration">--</div>
+                        <div class="label">日均运动时长</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="num" id="statTotalDuration">--</div>
+                        <div class="label">本周总时长</div>
+                    </div>
+                </div>
+
+                <div class="chart-wrap tall">
+                    <canvas id="exerciseChart"></canvas>
+                </div>
+
+                <div class="summary-notes" id="exerciseSummaryNotes">
+                    <strong>💬 本周运动总结：</strong><br>
+                    <span id="exerciseNotesSummary">暂无数据</span>
+                </div>
+            </div>
+
+            <!-- 饮食总结 -->
+            <div class="card">
+                <div class="card-title"><span class="icon">🍽️</span> 饮食周总结</div>
+
+                <div class="summary-stat">
+                    <div class="stat-item">
+                        <div class="num" id="statMealDays">--</div>
+                        <div class="label">记录天数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="num" id="statFullMealDays">--</div>
+                        <div class="label">三餐都吃了的天数</div>
+                    </div>
+                </div>
+
+                <div class="summary-notes" id="dietSummaryNotes">
+                    <strong>💬 本周饮食感受汇总：</strong><br>
+                    <span id="dietNotesSummary">暂无数据</span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // ================================================================
+        //  工具函数
+        // ================================================================
+        const DAYS = ['日', '一', '二', '三', '四', '五', '六'];
+        const MEALS = ['breakfast', 'lunch', 'dinner'];
+        const MEAL_NAMES = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐' };
+        const EXERCISE_TYPES = ['散步', '普拉提', '八段锦', '跑步', '其他'];
+        const MAX_SESSIONS = 3;
+
+        function pad2(n) { return String(n).padStart(2, '0'); }
+
+        function todayStr() {
+            const d = new Date();
+            return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+        }
+        function getTodayDateStr() { return todayStr(); }
+
+        function formatDateCN(dateStr) {
+            const [y, m, d] = dateStr.split('-');
+            const day = new Date(+y, +m - 1, +d).getDay();
+            return `${y}年${+m}月${+d}日 周${DAYS[day]}`;
+        }
+
+        function getMonday(dateStr) {
+            const d = new Date(dateStr + 'T00:00:00');
+            const day = d.getDay();
+            const diff = (day === 0 ? 6 : day - 1);
+            d.setDate(d.getDate() - diff);
+            return d;
+        }
+
+        function formatWeekLabel(monDate) {
+            const end = new Date(monDate);
+            end.setDate(end.getDate() + 6);
+            const m1 = monDate.getMonth() + 1,
+                d1 = monDate.getDate();
+            const m2 = end.getMonth() + 1,
+                d2 = end.getDate();
+            if (m1 === m2) return `${monDate.getFullYear()}年${m1}月${d1}日 - ${d2}日`;
+            return `${monDate.getFullYear()}年${m1}月${d1}日 - ${m2}月${d2}日`;
+        }
+
+        function dateStr(d) {
+            return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+        }
+
+        function getWeekDates(monDate) {
+            const dates = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(monDate);
+                d.setDate(d.getDate() + i);
+                dates.push(dateStr(d));
+            }
+            return dates;
+        }
+
+        // ================================================================
+        //  当前查看的日期（可切换）
+        // ================================================================
+        let currentViewDate = todayStr();
+
+        // ================================================================
+        //  数据读写
+        // ================================================================
+        function getData() {
+            try {
+                return JSON.parse(localStorage.getItem('health_daily_data') || '{}');
+            } catch { return {}; }
+        }
+
+        function setData(data) {
+            localStorage.setItem('health_daily_data', JSON.stringify(data));
+        }
+
+        function getDayData(dateStr) {
+            const data = getData();
+            return data[dateStr] || null;
+        }
+
+        function saveDayData(dateStr, record) {
+            const data = getData();
+            data[dateStr] = record;
+            setData(data);
+        }
+
+        // ================================================================
+        //  睡眠时长计算
+        // ================================================================
+        function calcSleepDuration() {
+            const bed = document.getElementById('sleepBedtime').value;
+            const wake = document.getElementById('sleepWakeTime').value;
+            const display = document.getElementById('sleepDurationDisplay');
+            if (!bed || !wake) {
+                display.textContent = '总时长：--';
+                return;
+            }
+            const [bh, bm] = bed.split(':').map(Number);
+            const [wh, wm] = wake.split(':').map(Number);
+            let totalMin = (wh * 60 + wm) - (bh * 60 + bm);
+            if (totalMin < 0) totalMin += 24 * 60;
+            const hrs = Math.floor(totalMin / 60);
+            const mins = totalMin % 60;
+            display.textContent = `总时长：${hrs}小时${mins}分钟 (${totalMin}分钟)`;
+        }
+
+        // ================================================================
+        //  饮食切换
+        // ================================================================
+        function toggleMeal(meal) {
+            const toggle = document.getElementById(meal + 'Toggle');
+            const content = document.getElementById(meal + 'Content');
+            const feeling = document.getElementById(meal + 'Feeling');
+            const isAte = toggle.textContent.includes('✅');
+            if (isAte) {
+                toggle.textContent = '❌ 没吃';
+                toggle.classList.remove('active');
+                content.disabled = true;
+                content.value = '';
+                feeling.disabled = true;
+                feeling.value = '';
+            } else {
+                toggle.textContent = '✅ 吃了';
+                toggle.classList.add('active');
+                content.disabled = false;
+                feeling.disabled = false;
+                content.focus();
+            }
+        }
+
+        // ================================================================
+        //  运动分次记录
+        // ================================================================
+        let sessionCount = 0;
+
+        function createSessionHTML(index, selectedType, durationVal) {
+            const opts = EXERCISE_TYPES.map(t =>
+                `<option value="${t}" ${selectedType === t ? 'selected' : ''}>${t}</option>`
+            ).join('');
+            const dur = durationVal != null ? durationVal : '';
+            return `
+                <div class="ex-session" data-index="${index}">
+                    <span class="session-label">第${index + 1}次</span>
+                    <select>${opts}</select>
+                    <input type="number" min="0" max="600" step="5" placeholder="时长" value="${dur}">
+                    <span style="font-size:13px;color:#aaa;">分钟</span>
+                    ${index >= 1 ? `<button class="close-btn" onclick="removeSession(this)" title="删除">✕</button>` : ''}
+                </div>
+            `;
+        }
+
+        function renderExerciseSessions(sessions) {
+            const container = document.getElementById('exerciseSessions');
+            const data = sessions || [{ type: '散步', duration: null }];
+            sessionCount = data.length;
+            container.innerHTML = data.map((s, i) => createSessionHTML(i, s.type, s.duration)).join('');
+            updateAddBtn();
+        }
+
+        function addExerciseSession() {
+            if (sessionCount >= MAX_SESSIONS) return;
+            const container = document.getElementById('exerciseSessions');
+            container.insertAdjacentHTML('beforeend', createSessionHTML(sessionCount, '散步', null));
+            sessionCount++;
+            updateAddBtn();
+        }
+
+        function removeSession(btn) {
+            const row = btn.closest('.ex-session');
+            row.remove();
+            sessionCount--;
+            // 重新编号
+            const container = document.getElementById('exerciseSessions');
+            const rows = container.querySelectorAll('.ex-session');
+            rows.forEach((r, i) => {
+                r.dataset.index = i;
+                r.querySelector('.session-label').textContent = `第${i + 1}次`;
+                const closeBtn = r.querySelector('.close-btn');
+                if (i === 0 && closeBtn) closeBtn.remove();
+                else if (i > 0 && !closeBtn) {
+                    const x = document.createElement('button');
+                    x.className = 'close-btn';
+                    x.textContent = '✕';
+                    x.onclick = function() { removeSession(this); };
+                    r.appendChild(x);
+                }
+            });
+            updateAddBtn();
+        }
+
+        function updateAddBtn() {
+            document.getElementById('exAddBtn').disabled = sessionCount >= MAX_SESSIONS;
+        }
+
+        function collectExerciseSessions() {
+            const sessions = [];
+            document.querySelectorAll('.ex-session').forEach(row => {
+                const type = row.querySelector('select').value;
+                const durInput = row.querySelector('input[type="number"]');
+                const dur = durInput.value !== '' ? +durInput.value : null;
+                sessions.push({ type, duration: dur });
+            });
+            return sessions;
+        }
+
+        // ================================================================
+        //  Tab 切换
+        // ================================================================
+        let currentTab = 'daily';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+            document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + tab));
+            if (tab === 'weekly') {
+                renderWeekly();
+            }
+        }
+
+        // ================================================================
+        //  加载指定日期数据到表单 + 导航函数
+        // ================================================================
+        function loadDate(dateStr) {
+            currentViewDate = dateStr;
+            const dayData = getDayData(dateStr);
+            const isToday = (dateStr === todayStr());
+
+            // 更新日期标签
+            document.getElementById('dateLabel').textContent = formatDateCN(dateStr);
+
+            // 更新后一天按钮
+            document.getElementById('nextDayBtn').disabled = isToday;
+
+            // 更新"回到今天"按钮
+            const todayBtn = document.getElementById('todayBtn');
+            if (isToday) {
+                todayBtn.classList.add('hidden');
+            } else {
+                todayBtn.classList.remove('hidden');
+            }
+
+            // 更新保存按钮文案
+            document.getElementById('saveBtn').textContent = isToday ? '💾 保存今日记录' : '💾 保存该日记录';
+
+            // 渲染周日历条
+            renderWeekStrip(dateStr);
+
+            // 重置睡眠
+            document.getElementById('sleepBedtime').value = '';
+            document.getElementById('sleepWakeTime').value = '';
+            document.getElementById('deepSleepPct').value = '';
+            document.getElementById('awakeCount').value = '0';
+            document.getElementById('sleepNotes').value = '';
+            document.getElementById('sleepDurationDisplay').textContent = '总时长：--';
+
+            // 重置运动
+            renderExerciseSessions(null);
+
+            // 重置饮食
+            MEALS.forEach(m => {
+                const toggle = document.getElementById(m + 'Toggle');
+                const content = document.getElementById(m + 'Content');
+                const feeling = document.getElementById(m + 'Feeling');
+                toggle.textContent = '✅ 吃了';
+                toggle.classList.add('active');
+                content.disabled = false;
+                content.value = '';
+                feeling.disabled = false;
+                feeling.value = '';
+            });
+
+            if (dayData) {
+                // ---- 睡眠 ----
+                if (dayData.sleep) {
+                    document.getElementById('sleepBedtime').value = dayData.sleep.bedtime || '';
+                    document.getElementById('sleepWakeTime').value = dayData.sleep.wakeTime || '';
+                    document.getElementById('deepSleepPct').value = dayData.sleep.deepSleepPct ?? '';
+                    document.getElementById('awakeCount').value = dayData.sleep.awakeCount ?? '0';
+                    document.getElementById('sleepNotes').value = dayData.sleep.notes || '';
+                    calcSleepDuration();
+                }
+                // ---- 运动 ----
+                if (dayData.exercise) {
+                    const sessions = dayData.exercise.sessions || [];
+                    if (sessions.length > 0) {
+                        renderExerciseSessions(sessions);
+                    }
+                }
+                // ---- 饮食 ----
+                if (dayData.diet) {
+                    MEALS.forEach(m => {
+                        const info = dayData.diet[m];
+                        const toggle = document.getElementById(m + 'Toggle');
+                        const content = document.getElementById(m + 'Content');
+                        const feeling = document.getElementById(m + 'Feeling');
+                        if (info && info.ate) {
+                            toggle.textContent = '✅ 吃了';
+                            toggle.classList.add('active');
+                            content.disabled = false;
+                            content.value = info.content || '';
+                            feeling.disabled = false;
+                            feeling.value = info.feeling || '';
+                        } else {
+                            toggle.textContent = '❌ 没吃';
+                            toggle.classList.remove('active');
+                            content.disabled = true;
+                            content.value = '';
+                            feeling.disabled = true;
+                            feeling.value = '';
+                        }
+                    });
+                }
+            }
+        }
+
+        // 翻页
+        function navigateDay(delta) {
+            const d = new Date(currentViewDate + 'T00:00:00');
+            d.setDate(d.getDate() + delta);
+            const newDate = dateStr(d);
+            if (delta > 0 && newDate > todayStr()) return; // 不能去未来
+            loadDate(newDate);
+        }
+
+        // 回到今天
+        function goToToday() {
+            loadDate(todayStr());
+        }
+
+        // 跳转到指定日期
+        function goToDate(ds) {
+            if (ds > todayStr()) return;
+            loadDate(ds);
+        }
+
+        // ================================================================
+        //  绘制周日历导航条
+        // ================================================================
+        function renderWeekStrip(activeDateStr) {
+            const strip = document.getElementById('weekStrip');
+            const monday = getMonday(activeDateStr);
+            const today = todayStr();
+            const allData = getData();
+            const DAY_NAMES_CN = ['一', '二', '三', '四', '五', '六', '日'];
+
+            let html = '';
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(monday);
+                d.setDate(d.getDate() + i);
+                const ds = dateStr(d);
+                const hasData = !!allData[ds];
+                const isToday = ds === today;
+                const isActive = ds === activeDateStr;
+                const isFuture = ds > today;
+
+                let cls = 'day-cell';
+                if (hasData) cls += ' has-data';
+                if (isToday) cls += ' today';
+                if (isActive) cls += ' active';
+                if (isFuture) cls += ' future';
+
+                const onclick = isFuture ? '' : ` onclick="goToDate('${ds}')"`;
+
+                html += `<div class="${cls}"${onclick}>`;
+                html += `<span class="day-name">${DAY_NAMES_CN[i]}</span>`;
+                html += `<span class="day-num">${d.getDate()}</span>`;
+                html += `<span class="data-dot"></span>`;
+                html += `</div>`;
+            }
+            strip.innerHTML = html;
+        }
+
+        // ================================================================
+        //  保存当前选定日期的记录
+        // ================================================================
+        function saveDaily() {
+            const dateStr = currentViewDate;
+
+            // ---- 睡眠 ----
+            const bedtime = document.getElementById('sleepBedtime').value;
+            const wakeTime = document.getElementById('sleepWakeTime').value;
+            const deepSleepPct = document.getElementById('deepSleepPct').value;
+            const awakeCount = document.getElementById('awakeCount').value;
+            const sleepNotes = document.getElementById('sleepNotes').value.trim();
+
+            let durationMin = null;
+            if (bedtime && wakeTime) {
+                const [bh, bm] = bedtime.split(':').map(Number);
+                const [wh, wm] = wakeTime.split(':').map(Number);
+                let dm = (wh * 60 + wm) - (bh * 60 + bm);
+                if (dm < 0) dm += 24 * 60;
+                durationMin = dm;
+            }
+
+            const sleep = {
+                bedtime: bedtime || '',
+                wakeTime: wakeTime || '',
+                durationMin: durationMin,
+                deepSleepPct: deepSleepPct !== '' ? +deepSleepPct : null,
+                awakeCount: awakeCount !== '' ? +awakeCount : 0,
+                notes: sleepNotes
+            };
+
+            // ---- 运动 ----
+            const sessions = collectExerciseSessions().filter(s => s.duration != null && s.duration > 0);
+            const exercise = { sessions };
+
+            // ---- 饮食 ----
+            const diet = {};
+            MEALS.forEach(m => {
+                const toggle = document.getElementById(m + 'Toggle');
+                const content = document.getElementById(m + 'Content');
+                const feeling = document.getElementById(m + 'Feeling');
+                const ate = toggle.textContent.includes('✅');
+                diet[m] = {
+                    ate: ate,
+                    content: ate ? content.value.trim() : '',
+                    feeling: ate ? feeling.value.trim() : ''
+                };
+            });
+
+            const record = { sleep, exercise, diet };
+            saveDayData(dateStr, record);
+
+            const toast = document.getElementById('saveToast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+            // 刷新周日历条以显示新保存的数据标记
+            renderWeekStrip(currentViewDate);
+        }
+
+        // ================================================================
+        //  周总结渲染
+        // ================================================================
+        let currentWeekMonday = getMonday(todayStr());
+        let chartInstances = {};
+
+        function shiftWeek(delta) {
+            currentWeekMonday.setDate(currentWeekMonday.getDate() + delta * 7);
+            renderWeekly();
+        }
+
+        function renderWeekly() {
+            const mon = currentWeekMonday;
+            document.getElementById('weekLabel').textContent = formatWeekLabel(mon);
+            const dates = getWeekDates(mon);
+
+            const allData = getData();
+            const weekRecords = [];
+            dates.forEach(d => {
+                if (allData[d]) {
+                    weekRecords.push({ date: d, record: allData[d] });
+                }
+            });
+
+            renderSleepSummary(weekRecords, dates);
+            renderExerciseSummary(weekRecords, dates);
+            renderDietSummary(weekRecords, dates);
+        }
+
+        // ---- 睡眠总结 ----
+        function renderSleepSummary(weekRecords, dates) {
+            const records = weekRecords.filter(r => r.record.sleep && r.record.sleep.bedtime);
+
+            let totalDuration = 0,
+                countDuration = 0;
+            let totalDeep = 0,
+                countDeep = 0;
+            let totalAwake = 0,
+                countAwake = 0;
+
+            records.forEach(r => {
+                const s = r.record.sleep;
+                if (s.durationMin != null) { totalDuration += s.durationMin;
+                    countDuration++; }
+                if (s.deepSleepPct != null) { totalDeep += s.deepSleepPct;
+                    countDeep++; }
+                if (s.awakeCount != null) { totalAwake += s.awakeCount;
+                    countAwake++; }
+            });
+
+            document.getElementById('statAvgDuration').textContent =
+                countDuration > 0 ? (totalDuration / countDuration / 60).toFixed(1) + 'h' : '--';
+            document.getElementById('statAvgDeep').textContent =
+                countDeep > 0 ? (totalDeep / countDeep).toFixed(1) + '%' : '--';
+            document.getElementById('statAvgAwake').textContent =
+                countAwake > 0 ? (totalAwake / countAwake).toFixed(1) + '次' : '--';
+
+            const labels = dates.map(d => {
+                const [y, m, day] = d.split('-');
+                return (+m) + '/' + (+day);
+            });
+
+            const durationData = dates.map(d => {
+                const r = weekRecords.find(w => w.date === d);
+                return (r && r.record.sleep && r.record.sleep.durationMin != null) ?
+                    +(r.record.sleep.durationMin / 60).toFixed(1) :
+                    null;
+            });
+
+            const bedtimeData = dates.map(d => {
+                const r = weekRecords.find(w => w.date === d);
+                if (r && r.record.sleep && r.record.sleep.bedtime) {
+                    const [h, m] = r.record.sleep.bedtime.split(':').map(Number);
+                    return +(h + m / 60).toFixed(1);
+                }
+                return null;
+            });
+
+            const deepData = dates.map(d => {
+                const r = weekRecords.find(w => w.date === d);
+                return (r && r.record.sleep && r.record.sleep.deepSleepPct != null) ?
+                    r.record.sleep.deepSleepPct :
+                    null;
+            });
+
+            const noteTexts = records
+                .filter(r => r.record.sleep.notes)
+                .map(r => {
+                    const [y, m, d] = r.date.split('-');
+                    return `【${+m}月${+d}日】${r.record.sleep.notes}`;
+                });
+            document.getElementById('sleepNotesSummary').textContent =
+                noteTexts.length > 0 ? noteTexts.join('\n') : '本周没有记录备注信息';
+
+            drawChart('sleepDurationChart', 'line', labels, [{
+                label: '睡眠时长 (小时)',
+                data: durationData,
+                borderColor: '#4a7c59',
+                backgroundColor: 'rgba(74,124,89,0.12)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                spanGaps: true
+            }]);
+
+            drawChart('sleepBedtimeChart', 'line', labels, [{
+                label: '入睡时间 (时)',
+                data: bedtimeData,
+                borderColor: '#7b5ea7',
+                backgroundColor: 'rgba(123,94,167,0.12)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                spanGaps: true
+            }], {
+                min: 20,
+                max: 26,
+                ticks: {
+                    stepSize: 0.5,
+                    callback: function(v) {
+                        const h = Math.floor(v);
+                        const m = Math.round((v - h) * 60);
+                        return h + ':' + (m < 10 ? '0' : '') + m;
+                    }
+                }
+            });
+
+            drawChart('deepSleepChart', 'line', labels, [{
+                label: '深度睡眠占比 (%)',
+                data: deepData,
+                borderColor: '#3a8fb5',
+                backgroundColor: 'rgba(58,143,181,0.12)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                spanGaps: true
+            }]);
+        }
+
+        // ---- 运动总结 ----
+        function renderExerciseSummary(weekRecords, dates) {
+            const labels = dates.map(d => {
+                const [y, m, day] = d.split('-');
+                return (+m) + '/' + (+day);
+            });
+
+            // 每天的总运动时长（所有session合计）
+            const exData = dates.map(d => {
+                const r = weekRecords.find(w => w.date === d);
+                if (!r || !r.record.exercise || !r.record.exercise.sessions) return 0;
+                return r.record.exercise.sessions
+                    .filter(s => s.duration != null)
+                    .reduce((a, s) => a + s.duration, 0);
+            });
+
+            const exDays = exData.filter(v => v > 0).length;
+            const totalMin = exData.reduce((a, b) => a + b, 0);
+            const avgMin = exDays > 0 ? Math.round(totalMin / 7) : 0;
+
+            document.getElementById('statExerciseDays').textContent = exDays + '天';
+            document.getElementById('statExAvgDuration').textContent = avgMin + '分钟';
+            document.getElementById('statTotalDuration').textContent = totalMin + '分钟';
+
+            drawChart('exerciseChart', 'bar', labels, [{
+                label: '运动时长 (分钟)',
+                data: exData,
+                backgroundColor: exData.map(v => v > 0 ? 'rgba(74,124,89,0.7)' : 'rgba(200,190,180,0.3)'),
+                borderColor: exData.map(v => v > 0 ? '#4a7c59' : '#ccc'),
+                borderWidth: 1,
+                borderRadius: 4,
+            }], { beginAtZero: true });
+
+            // 运动种类统计
+            const typeCount = {};
+            weekRecords.forEach(r => {
+                if (r.record.exercise && r.record.exercise.sessions) {
+                    r.record.exercise.sessions.forEach(s => {
+                        typeCount[s.type] = (typeCount[s.type] || 0) + 1;
+                    });
+                }
+            });
+            const typeSummary = Object.entries(typeCount)
+                .sort((a, b) => b[1] - a[1])
+                .map(([k, v]) => `${k} ${v}次`)
+                .join('、');
+            document.getElementById('exerciseNotesSummary').textContent =
+                typeSummary ? `本周运动项目：${typeSummary}` :
+                (exDays > 0 ? `本周运动${exDays}天，共${totalMin}分钟` : '本周暂无运动记录');
+        }
+
+        // ---- 饮食总结 ----
+        function renderDietSummary(weekRecords, dates) {
+            let hasData = false;
+            let fullMealDays = 0;
+            let recordDays = 0;
+            const allFeelings = [];
+
+            dates.forEach(d => {
+                const r = weekRecords.find(w => w.date === d);
+                if (!r || !r.record.diet) return;
+                const diet = r.record.diet;
+                let ateCount = 0;
+                let dayFeelings = [];
+
+                MEALS.forEach(m => {
+                    const info = diet[m];
+                    if (info && info.ate) {
+                        ateCount++;
+                        hasData = true;
+                        if (info.feeling) {
+                            const [y, mon, day] = d.split('-');
+                            dayFeelings.push(`${MEAL_NAMES[m]}：${info.feeling}`);
+                        }
+                    }
+                });
+
+                if (ateCount > 0) recordDays++;
+                if (ateCount === 3) fullMealDays++;
+                if (dayFeelings.length > 0) {
+                    const [y, mon, day] = d.split('-');
+                    allFeelings.push(`【${+mon}月${+day}日】${dayFeelings.join('，')}`);
+                }
+            });
+
+            document.getElementById('statMealDays').textContent =
+                hasData ? recordDays + '天' : '--';
+            document.getElementById('statFullMealDays').textContent =
+                hasData ? fullMealDays + '天' : '--';
+
+            document.getElementById('dietNotesSummary').textContent =
+                allFeelings.length > 0 ? allFeelings.join('\n') :
+                (hasData ? '本周没有记录饮食感受' : '暂无数据');
+        }
+
+        // ---- 通用图表绘制 ----
+        function drawChart(canvasId, type, labels, datasets, extraOpts) {
+            const canvas = document.getElementById(canvasId);
+            if (chartInstances[canvasId]) {
+                chartInstances[canvasId].destroy();
+                delete chartInstances[canvasId];
+            }
+
+            const ctx = canvas.getContext('2d');
+            const opts = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: datasets.length > 1,
+                        position: 'top',
+                        labels: { boxWidth: 12, padding: 12, font: { size: 12 } }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(50,50,50,0.9)',
+                        padding: 10,
+                        bodyFont: { size: 13 },
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 11 }, color: '#888' }
+                    },
+                    y: {
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: { font: { size: 11 }, color: '#888' }
+                    }
+                }
+            };
+
+            if (extraOpts) {
+                if (extraOpts.min !== undefined || extraOpts.max !== undefined) {
+                    opts.scales.y.min = extraOpts.min;
+                    opts.scales.y.max = extraOpts.max;
+                }
+                if (extraOpts.ticks) {
+                    opts.scales.y.ticks = { ...opts.scales.y.ticks, ...extraOpts.ticks };
+                }
+                if (extraOpts.beginAtZero) {
+                    opts.scales.y.beginAtZero = true;
+                }
+            }
+
+            chartInstances[canvasId] = new Chart(ctx, {
+                type: type,
+                data: { labels, datasets },
+                options: opts
+            });
+        }
+
+        // ================================================================
+        //  数据导入/导出
+        // ================================================================
+        function exportData() {
+            const data = getData();
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '健康小记_备份_' + todayStr() + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    const current = getData();
+                    for (const key of Object.keys(imported)) {
+                        current[key] = imported[key];
+                    }
+                    setData(current);
+                    alert('✅ 导入成功！共导入 ' + Object.keys(imported).length + ' 条记录。');
+                    if (currentTab === 'daily') loadDate(currentViewDate);
+                    else renderWeekly();
+                } catch (err) {
+                    alert('❌ 文件格式不对，请选择正确的备份文件。');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // ================================================================
+        //  初始化
+        // ================================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDate(todayStr());
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    saveDaily();
+                }
+            });
+        });
+
+        // 注册 Service Worker（PWA 离线支持）
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(function() {
+                console.log('SW registered');
+            }).catch(function(err) {
+                console.log('SW failed:', err);
+            });
+        }
+    </script>
+
+</body>
+</html>
