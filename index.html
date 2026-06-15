@@ -3,14 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#4a7c59">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <link rel="icon" type="image/png" href="icon-192.png">
     <title>健康小记</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js">
+    
+        // ================================================================
+        //  身份选择 / 设置
+        // ================================================================
+        const IDENTITY_LABELS = { office: '💼 上班族', wellness: '🌿 养生党' };
+
+        function showOnboarding() {
+            document.getElementById('onboardingOverlay').classList.remove('hidden');
+        }
+
+        function selectIdentity(id) {
+            if (id === 'wellness') {
+                document.getElementById('medDialog').classList.remove('hidden');
+            } else {
+                setProfileAndFinish(id, false);
+            }
+        }
+
+        function setProfileAndFinish(identity, trackMed) {
+            document.getElementById('medDialog').classList.add('hidden');
+            setProfile({ identity: identity, trackMedication: trackMed });
+            document.getElementById('onboardingOverlay').classList.add('hidden');
+            updateProfileUI();
+            // 刷新当前页面，显示/隐藏相应板块
+            if (currentTab === 'daily') loadDate(currentViewDate);
+            else renderWeekly();
+        }
+
+        function updateProfileUI() {
+            const p = getProfile();
+            const badge = document.getElementById('profileBadge');
+            const text = document.getElementById('profileBadgeText');
+            if (p) {
+                badge.classList.remove('hidden');
+                text.textContent = IDENTITY_LABELS[p.identity] || p.identity;
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function showSettings() {
+            const p = getProfile();
+            if (!p) return;
+            document.getElementById('settingsIdentity').textContent = IDENTITY_LABELS[p.identity] || p.identity;
+            document.getElementById('settingsMed').textContent =
+                p.identity === 'wellness' ? (p.trackMedication ? '✅ 记录' : '❌ 不记录') : '—';
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+
+        function hideSettings() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function resetProfile() {
+            hideSettings();
+            // 清空身份
+            setProfile(null);
+            showOnboarding();
+        }
+
+        // 点击弹窗背景关闭
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('settingsModal');
+            if (e.target === modal) hideSettings();
+            const medDlg = document.getElementById('medDialog');
+            if (e.target === medDlg) medDlg.classList.add('hidden');
+        });
+
+    
+        // ================================================================
+        //  零星睡眠 / 午睡
+        // ================================================================
+        let napCount = 0;
+        let napOpen = false;
+
+        function toggleNapSection() {
+            const body = document.getElementById('napBody');
+            const arrow = document.getElementById('napArrow');
+            napOpen = !napOpen;
+            body.classList.toggle('open', napOpen);
+            arrow.classList.toggle('open', napOpen);
+        }
+
+        function createNapHTML(index, startTime, endTime, notes) {
+            const st = startTime || '';
+            const et = endTime || '';
+            const nt = notes || '';
+            return `<div class="nap-session" data-nap-index="${index}">
+                <span class="nlbl">第${index+1}次</span>
+                <input type="time" class="nap-start" value="${st}" placeholder="开始">
+                <span style="font-size:13px;color:#aaa;">→</span>
+                <input type="time" class="nap-end" value="${et}" placeholder="结束">
+                <input type="text" class="nap-notes" value="${nt}" placeholder="备注（选填）">
+                <button class="nclose" onclick="removeNap(this)">✕</button>
+            </div>`;
+        }
+
+        function renderNapSessions(sessions) {
+            const container = document.getElementById('napSessions');
+            const data = sessions || [];
+            napCount = data.length;
+            container.innerHTML = data.map((s, i) => createNapHTML(i, s.startTime, s.endTime, s.notes)).join('');
+        }
+
+        function addNapSession() {
+            const container = document.getElementById('napSessions');
+            container.insertAdjacentHTML('beforeend', createNapHTML(napCount, '', '', ''));
+            napCount++;
+        }
+
+        function removeNap(btn) {
+            const row = btn.closest('.nap-session');
+            row.remove();
+            napCount--;
+            // 重新编号
+            const rows = document.querySelectorAll('.nap-session');
+            rows.forEach((r, i) => {
+                r.dataset.napIndex = i;
+                r.querySelector('.nlbl').textContent = `第${i+1}次`;
+            });
+        }
+
+        function collectNaps() {
+            const naps = [];
+            document.querySelectorAll('.nap-session').forEach(row => {
+                const st = row.querySelector('.nap-start').value;
+                const et = row.querySelector('.nap-end').value;
+                const nt = row.querySelector('.nap-notes').value.trim();
+                if (st && et) {
+                    naps.push({ startTime: st, endTime: et, notes: nt });
+                }
+            });
+            return naps;
+        }
+
+        // ================================================================
+        //  吃药记录
+        // ================================================================
+        let medCount = 0;
+
+        function createMedRecordHTML(index, time, dosage, notes) {
+            const t = time || '';
+            const d = dosage || '';
+            const nt = notes || '';
+            return `<div class="med-record" data-med-index="${index}">
+                <span class="mlbl">第${index+1}次</span>
+                <input type="time" class="med-time" value="${t}" placeholder="时间">
+                <input type="number" class="med-dosage" value="${d}" min="0" max="99" step="0.5" placeholder="0">
+                <span class="munit">次/粒</span>
+                <input type="text" class="med-notes" value="${nt}" placeholder="备注（选填）">
+                <button class="mclose" onclick="removeMedRecord(this)">✕</button>
+            </div>`;
+        }
+
+        function renderMedRecords(records) {
+            const container = document.getElementById('medRecords');
+            const data = records || [];
+            medCount = data.length;
+            container.innerHTML = data.map((r, i) => createMedRecordHTML(i, r.time, r.dosage, r.notes)).join('');
+            // 如果没有记录，显示空状态
+            if (data.length === 0) {
+                container.innerHTML = '<div class="med-empty">今天还没记录吃药</div>';
+            }
+        }
+
+        function addMedRecord() {
+            const container = document.getElementById('medRecords');
+            // 移除空状态提示
+            const empty = container.querySelector('.med-empty');
+            if (empty) container.innerHTML = '';
+            container.insertAdjacentHTML('beforeend', createMedRecordHTML(medCount, '', '', ''));
+            medCount++;
+        }
+
+        function removeMedRecord(btn) {
+            const row = btn.closest('.med-record');
+            row.remove();
+            medCount--;
+            // 重新编号
+            const rows = document.querySelectorAll('.med-record');
+            rows.forEach((r, i) => {
+                r.dataset.medIndex = i;
+                r.querySelector('.mlbl').textContent = `第${i+1}次`;
+            });
+            // 如果一条都没有了，显示空状态
+            if (rows.length === 0) {
+                document.getElementById('medRecords').innerHTML = '<div class="med-empty">今天还没记录吃药</div>';
+            }
+        }
+
+        function collectMedRecords() {
+            const records = [];
+            document.querySelectorAll('.med-record').forEach(row => {
+                const t = row.querySelector('.med-time').value;
+                const d = row.querySelector('.med-dosage').value;
+                const nt = row.querySelector('.med-notes').value.trim();
+                if (t && d) {
+                    records.push({ time: t, dosage: d !== '' ? +d : null, notes: nt });
+                }
+            });
+            return records;
+        }
+
+        // ================================================================
+        //  根据身份显示/隐藏板块
+        // ================================================================
+        function updateSectionVisibility() {
+            const medCard = document.getElementById('medCard');
+            if (shouldTrackMedication()) {
+                medCard.classList.add('visible');
+            } else {
+                medCard.classList.remove('visible');
+            }
+        }
+
     </script>
     <style>
         /* ===== 全局重置 & 基础 ===== */
@@ -727,6 +936,264 @@
         .week-strip .day-cell:active {
             transform: scale(0.95);
         }
+    
+        /* ===== 身份选择引导页（覆盖层） ===== */
+        .onboarding-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: linear-gradient(145deg, #f5f0eb 0%, #e8f0e4 100%);
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column;
+            padding: 24px;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+        .onboarding-overlay.hidden {
+            opacity: 0; visibility: hidden; pointer-events: none;
+        }
+        .onboarding-title {
+            font-size: 28px; font-weight: 700; color: #4a4a4a;
+            margin-bottom: 6px; letter-spacing: 1px;
+        }
+        .onboarding-sub {
+            font-size: 15px; color: #999; margin-bottom: 32px;
+        }
+        .onboarding-cards {
+            display: flex; gap: 20px; flex-wrap: wrap;
+            justify-content: center; max-width: 480px;
+        }
+        .onboarding-card {
+            flex: 1; min-width: 180px; max-width: 220px;
+            background: #fff; border-radius: 20px; padding: 28px 20px;
+            text-align: center; cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            transition: all 0.25s;
+            border: 2px solid transparent;
+        }
+        .onboarding-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            border-color: #4a7c59;
+        }
+        .onboarding-card .emoji {
+            font-size: 48px; margin-bottom: 12px; display: block;
+        }
+        .onboarding-card .name {
+            font-size: 18px; font-weight: 600; color: #4a4a4a; margin-bottom: 6px;
+        }
+        .onboarding-card .desc {
+            font-size: 13px; color: #999; line-height: 1.5;
+        }
+        /* 吃药询问弹窗 */
+        .onboarding-dialog {
+            position: fixed; inset: 0; z-index: 10000;
+            background: rgba(0,0,0,0.3);
+            display: flex; align-items: center; justify-content: center;
+            padding: 24px;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .onboarding-dialog.hidden {
+            opacity: 0; visibility: hidden; pointer-events: none;
+        }
+        .onboarding-dialog .dialog-card {
+            background: #fff; border-radius: 20px; padding: 32px 28px;
+            max-width: 340px; width: 100%; text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+        }
+        .onboarding-dialog .dialog-card .icon {
+            font-size: 42px; margin-bottom: 10px; display: block;
+        }
+        .onboarding-dialog .dialog-card h3 {
+            font-size: 18px; font-weight: 600; color: #4a4a4a; margin-bottom: 8px;
+        }
+        .onboarding-dialog .dialog-card p {
+            font-size: 14px; color: #888; margin-bottom: 20px; line-height: 1.5;
+        }
+        .onboarding-dialog .dialog-actions {
+            display: flex; gap: 12px; justify-content: center;
+        }
+        .onboarding-dialog .dialog-actions button {
+            padding: 10px 28px; border-radius: 30px; font-size: 15px;
+            font-weight: 500; cursor: pointer; transition: all 0.2s;
+            border: none;
+        }
+        .onboarding-dialog .dialog-actions .btn-yes {
+            background: #4a7c59; color: #fff;
+        }
+        .onboarding-dialog .dialog-actions .btn-yes:hover {
+            background: #3d6b4b;
+        }
+        .onboarding-dialog .dialog-actions .btn-no {
+            background: #f0ebe5; color: #777;
+        }
+        .onboarding-dialog .dialog-actions .btn-no:hover {
+            background: #e5ddd5;
+        }
+
+        /* ===== 设置弹窗 ===== */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 9000;
+            background: rgba(0,0,0,0.25);
+            display: flex; align-items: center; justify-content: center;
+            padding: 24px;
+            transition: opacity 0.25s, visibility 0.25s;
+        }
+        .modal-overlay.hidden {
+            opacity: 0; visibility: hidden; pointer-events: none;
+        }
+        .modal-card {
+            background: #fff; border-radius: 20px; padding: 28px 24px;
+            max-width: 380px; width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        .modal-card h3 {
+            font-size: 18px; font-weight: 600; color: #4a4a4a; margin-bottom: 16px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .modal-card .modal-close {
+            border: none; background: #f0ebe5; width: 28px; height: 28px;
+            border-radius: 50%; font-size: 14px; cursor: pointer;
+            color: #888; margin-left: auto;
+        }
+        .modal-card .modal-close:hover { background: #e5ddd5; }
+        .modal-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 0; border-bottom: 1px solid #f0ebe5;
+        }
+        .modal-row:last-child { border-bottom: none; }
+        .modal-row .mlabel {
+            font-size: 14px; color: #555; font-weight: 500;
+        }
+        .modal-row .mval {
+            font-size: 14px; color: #888;
+        }
+        .modal-row button {
+            padding: 6px 16px; border-radius: 20px; font-size: 13px;
+            border: 1.5px solid #4a7c59; color: #4a7c59;
+            background: transparent; cursor: pointer; transition: all 0.2s;
+        }
+        .modal-row button:hover { background: #f0f7ee; }
+
+        /* ===== 身份标签 ===== */
+        .profile-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 13px; color: #888; background: #f0ebe5;
+            padding: 4px 14px; border-radius: 20px;
+            margin-left: 8px; cursor: pointer;
+            transition: background 0.2s;
+            vertical-align: middle;
+        }
+        .profile-badge:hover { background: #e5ddd5; }
+        .profile-badge .dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #4a7c59; display: inline-block;
+        }
+        .btn-settings {
+            border: none; background: transparent; font-size: 20px;
+            cursor: pointer; color: #999; transition: color 0.2s;
+            padding: 4px; vertical-align: middle;
+        }
+        .btn-settings:hover { color: #4a7c59; }
+
+        /* header 右侧按钮区 */
+        .header-actions {
+            display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 500px) {
+            .onboarding-title { font-size: 22px; }
+            .onboarding-cards { gap: 12px; }
+            .onboarding-card { min-width: 140px; padding: 20px 14px; }
+            .onboarding-card .emoji { font-size: 36px; }
+        }
+
+    
+        /* ===== 零星睡眠折叠区 ===== */
+        .nap-section { margin-top: 16px; border-top: 1px solid #f0ebe5; padding-top: 12px; }
+        .nap-toggle {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 14px; font-weight: 500; color: #888;
+            cursor: pointer; user-select: none; padding: 6px 0;
+            transition: color 0.2s;
+        }
+        .nap-toggle:hover { color: #4a7c59; }
+        .nap-toggle .arrow { font-size: 12px; transition: transform 0.25s; }
+        .nap-toggle .arrow.open { transform: rotate(90deg); }
+        .nap-toggle .hint { font-size: 12px; color: #bbb; margin-left: 6px; font-weight: 400; }
+        .nap-body { display: none; padding: 8px 0 4px; }
+        .nap-body.open { display: block; }
+        .nap-session {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 8px; flex-wrap: wrap;
+            padding: 8px 12px; background: #fcfaf8;
+            border-radius: 12px; border: 1px solid #f0ebe5;
+        }
+        .nap-session .nlbl { font-size: 13px; font-weight: 500; color: #888; min-width: 48px; }
+        .nap-session input[type="time"] {
+            padding: 6px 10px; border: 1.5px solid #e8e0d8; border-radius: 10px;
+            font-size: 13px; background: #fff; outline: none;
+            min-width: 90px;
+        }
+        .nap-session input[type="time"]:focus { border-color: #4a7c59; }
+        .nap-session input[type="text"] {
+            flex: 1; min-width: 80px; padding: 6px 10px;
+            border: 1.5px solid #e8e0d8; border-radius: 10px;
+            font-size: 13px; background: #fff; outline: none;
+        }
+        .nap-session input[type="text"]:focus { border-color: #4a7c59; }
+        .nap-session .nclose {
+            border: none; background: transparent; color: #ccc;
+            font-size: 16px; cursor: pointer; padding: 0 4px; line-height: 1;
+        }
+        .nap-session .nclose:hover { color: #e87171; }
+        .nap-add-btn {
+            padding: 5px 16px; border: 1.5px dashed #c8c0b6; border-radius: 20px;
+            font-size: 13px; color: #999; background: transparent;
+            cursor: pointer; transition: all 0.2s; margin-top: 2px;
+        }
+        .nap-add-btn:hover { border-color: #4a7c59; color: #4a7c59; background: #f8fbf6; }
+
+        /* ===== 吃药记录 ===== */
+        .med-section { display: none; }
+        .med-section.visible { display: block; }
+        .med-record {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 8px; flex-wrap: wrap;
+            padding: 8px 12px; background: #fcfaf8;
+            border-radius: 12px; border: 1px solid #f0ebe5;
+        }
+        .med-record .mlbl { font-size: 13px; font-weight: 500; color: #888; min-width: 48px; }
+        .med-record input[type="time"] {
+            padding: 6px 10px; border: 1.5px solid #e8e0d8; border-radius: 10px;
+            font-size: 13px; background: #fff; outline: none; min-width: 90px;
+        }
+        .med-record input[type="time"]:focus { border-color: #4a7c59; }
+        .med-record input[type="number"] {
+            width: 56px; padding: 6px 8px; border: 1.5px solid #e8e0d8;
+            border-radius: 10px; font-size: 13px; background: #fff; outline: none;
+        }
+        .med-record input[type="number"]:focus { border-color: #4a7c59; }
+        .med-record .munit { font-size: 13px; color: #aaa; }
+        .med-record input[type="text"] {
+            flex: 1; min-width: 80px; padding: 6px 10px;
+            border: 1.5px solid #e8e0d8; border-radius: 10px;
+            font-size: 13px; background: #fff; outline: none;
+        }
+        .med-record input[type="text"]:focus { border-color: #4a7c59; }
+        .med-record .mclose {
+            border: none; background: transparent; color: #ccc;
+            font-size: 16px; cursor: pointer; padding: 0 4px; line-height: 1;
+        }
+        .med-record .mclose:hover { color: #e87171; }
+        .med-add-btn {
+            padding: 5px 16px; border: 1.5px dashed #c8c0b6; border-radius: 20px;
+            font-size: 13px; color: #999; background: transparent;
+            cursor: pointer; transition: all 0.2s; margin-top: 2px;
+        }
+        .med-add-btn:hover { border-color: #4a7c59; color: #4a7c59; background: #f8fbf6; }
+        .med-empty {
+            font-size: 13px; color: #bbb; text-align: center; padding: 12px 0;
+        }
+
     </style>
 </head>
 <body>
@@ -737,7 +1204,12 @@
             <h1>🌿 健康小记</h1>
             <div class="sub">每天3分钟，记录你的健康</div>
         </div>
-        <div>
+        <div class="header-actions">
+            <span id="profileBadge" class="profile-badge hidden" onclick="showSettings()">
+                <span class="dot"></span>
+                <span id="profileBadgeText">--</span>
+            </span>
+            <button class="btn-settings" onclick="showSettings()" title="设置">⚙️</button>
             <button class="btn-export" onclick="exportData()">📥 导出数据</button>
             <span class="btn-import-wrap">
                 <button class="btn-import">📤 导入</button>
@@ -797,6 +1269,20 @@
                     <label>📝 复盘 / 备注</label>
                     <textarea id="sleepNotes" placeholder="比如：今天为什么清醒次数多？喝了咖啡？压力大？睡眠质量如何？……&#10;写下来，周总结的时候会汇总到一起看。"></textarea>
                 </div>
+                    <!-- 零星睡眠（折叠） -->
+                    <div class="nap-section">
+                        <div class="nap-toggle" onclick="toggleNapSection()">
+                            <span class="arrow" id="napArrow">▶</span>
+                            零星睡眠 / 午睡
+                            <span class="hint" id="napHint">（需要时展开记录）</span>
+                        </div>
+                        <div class="nap-body" id="napBody">
+                            <div id="napSessions">
+                                <!-- 由 JS 动态生成 -->
+                            </div>
+                            <button class="nap-add-btn" onclick="addNapSession()">＋ 添加一次零星睡眠</button>
+                        </div>
+                    </div>
             </div>
 
             <!-- 运动 -->
@@ -851,6 +1337,16 @@
                     </div>
                 </div>
             </div>
+
+              <!-- 吃药记录（养生党专用） -->
+              <div class="card med-section" id="medCard">
+                  <div class="card-title"><span class="icon">💊</span> 吃药记录</div>
+                  <div style="font-size:13px;color:#999;margin:-8px 0 12px;">每次吃药时记录时间和次数</div>
+                  <div id="medRecords">
+                      <!-- 由 JS 动态生成 -->
+                  </div>
+                  <button class="med-add-btn" onclick="addMedRecord()">＋ 添加一次吃药记录</button>
+              </div>
 
             <!-- 保存 -->
             <div class="save-area">
@@ -1026,17 +1522,24 @@
         // ================================================================
         let currentViewDate = todayStr();
 
-        // ================================================================
-        //  数据读写
-        // ================================================================
+        // ---- 存储抽象层 ----
+        // 现在使用 localStorage，未来可替换为后端 API
+        const storage = {
+            _prefix: 'health_daily_',
+            get(key) {
+                try { return JSON.parse(localStorage.getItem(this._prefix + key) || 'null'); } catch { return null; }
+            },
+            set(key, data) {
+                localStorage.setItem(this._prefix + key, JSON.stringify(data));
+            }
+        };
+
         function getData() {
-            try {
-                return JSON.parse(localStorage.getItem('health_daily_data') || '{}');
-            } catch { return {}; }
+            return storage.get('data') || {};
         }
 
         function setData(data) {
-            localStorage.setItem('health_daily_data', JSON.stringify(data));
+            storage.set('data', data);
         }
 
         function getDayData(dateStr) {
@@ -1048,6 +1551,29 @@
             const data = getData();
             data[dateStr] = record;
             setData(data);
+        }
+
+        // ---- 用户配置 ----
+        function getProfile() {
+            return storage.get('profile') || null;
+        }
+
+        function setProfile(profile) {
+            storage.set('profile', profile);
+        }
+
+        function hasProfile() {
+            return getProfile() !== null;
+        }
+
+        function isWellness() {
+            const p = getProfile();
+            return p && p.identity === 'wellness';
+        }
+
+        function shouldTrackMedication() {
+            const p = getProfile();
+            return p && p.identity === 'wellness' && p.trackMedication === true;
         }
 
         // ================================================================
@@ -1364,7 +1890,8 @@
                 durationMin: durationMin,
                 deepSleepPct: deepSleepPct !== '' ? +deepSleepPct : null,
                 awakeCount: awakeCount !== '' ? +awakeCount : 0,
-                notes: sleepNotes
+                notes: sleepNotes,
+                naps: collectNaps()
             };
 
             // ---- 运动 ----
@@ -1385,7 +1912,8 @@
                 };
             });
 
-            const record = { sleep, exercise, diet };
+            const medication = { records: collectMedRecords() };
+            const record = { sleep, exercise, diet, medication };
             saveDayData(dateStr, record);
 
             const toast = document.getElementById('saveToast');
@@ -1729,6 +2257,12 @@
         //  初始化
         // ================================================================
         document.addEventListener('DOMContentLoaded', function() {
+            // 首次使用 → 展示身份选择
+            if (!hasProfile()) {
+                showOnboarding();
+            } else {
+                updateProfileUI();
+            }
             loadDate(todayStr());
             document.addEventListener('keydown', function(e) {
                 if ((e.ctrlKey || e.metaKey) && e.key === 's') {
@@ -1737,16 +2271,61 @@
                 }
             });
         });
-
-        // 注册 Service Worker（PWA 离线支持）
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').then(function() {
-                console.log('SW registered');
-            }).catch(function(err) {
-                console.log('SW failed:', err);
-            });
-        }
     </script>
+
+
+    <!-- ========== 身份选择引导页 ========== -->
+    <div class="onboarding-overlay" id="onboardingOverlay">
+        <div class="onboarding-title">🌿 欢迎使用健康小记</div>
+        <div class="onboarding-sub">先告诉我你的身份，我会帮你定制记录内容</div>
+        <div class="onboarding-cards">
+            <div class="onboarding-card" onclick="selectIdentity('office')">
+                <span class="emoji">💼</span>
+                <div class="name">上班族</div>
+                <div class="desc">记录睡眠、饮食、运动，<br>保持工作状态</div>
+            </div>
+            <div class="onboarding-card" onclick="selectIdentity('wellness')">
+                <span class="emoji">🌿</span>
+                <div class="name">养生党</div>
+                <div class="desc">关注作息调理，<br>搭配健康管理</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 吃药询问弹窗 ========== -->
+    <div class="onboarding-dialog hidden" id="medDialog">
+        <div class="dialog-card">
+            <span class="icon">💊</span>
+            <h3>需要记录吃药吗？</h3>
+            <p>如果你有固定服药需求，可以帮你记录<br>每天的吃药时间和次数</p>
+            <div class="dialog-actions">
+                <button class="btn-yes" onclick="setProfileAndFinish('wellness', true)">需要记录</button>
+                <button class="btn-no" onclick="setProfileAndFinish('wellness', false)">不需要</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 设置弹窗 ========== -->
+    <div class="modal-overlay hidden" id="settingsModal">
+        <div class="modal-card">
+            <h3>
+                ⚙️ 设置
+                <button class="modal-close" onclick="hideSettings()">✕</button>
+            </h3>
+            <div class="modal-row">
+                <span class="mlabel">当前身份</span>
+                <span class="mval" id="settingsIdentity">--</span>
+            </div>
+            <div class="modal-row">
+                <span class="mlabel">记录吃药</span>
+                <span class="mval" id="settingsMed">--</span>
+            </div>
+            <div class="modal-row">
+                <span class="mlabel">切换身份</span>
+                <button onclick="resetProfile()">重新选择</button>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
