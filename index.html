@@ -3,9 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4a7c59">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" type="image/png" href="icon-192.png">
     <title>健康小记</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-<style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js">
+    </script>
+    <style>
         /* ===== 全局重置 & 基础 ===== */
         * {
             margin: 0;
@@ -728,22 +735,14 @@
             display: flex; align-items: center; justify-content: center;
             flex-direction: column;
             padding: 24px;
-            transition: opacity 0.5s, visibility 0.5s;
         }
-        .onboarding-overlay.hidden {
-            display: none;
-        }
+        .onboarding-overlay.hidden { display: none; }
         .onboarding-title {
             font-size: 28px; font-weight: 700; color: #4a4a4a;
             margin-bottom: 6px; letter-spacing: 1px;
         }
-        .onboarding-sub {
-            font-size: 15px; color: #999; margin-bottom: 32px;
-        }
-        .onboarding-cards {
-            display: flex; gap: 20px; flex-wrap: wrap;
-            justify-content: center; max-width: 480px;
-        }
+        .onboarding-sub { font-size: 15px; color: #999; margin-bottom: 32px; }
+        .onboarding-cards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 480px; }
         .onboarding-card {
             flex: 1; min-width: 180px; max-width: 220px;
             background: #fff; border-radius: 20px; padding: 28px 20px;
@@ -752,236 +751,81 @@
             transition: all 0.25s;
             border: 2px solid transparent;
         }
-        .onboarding-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-            border-color: #4a7c59;
-        }
-        .onboarding-card .emoji {
-            font-size: 48px; margin-bottom: 12px; display: block;
-        }
-        .onboarding-card .name {
-            font-size: 18px; font-weight: 600; color: #4a4a4a; margin-bottom: 6px;
-        }
-        .onboarding-card .desc {
-            font-size: 13px; color: #999; line-height: 1.5;
-        }
+        .onboarding-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); border-color: #4a7c59; }
+        .onboarding-card .emoji { font-size: 48px; margin-bottom: 12px; display: block; }
+        .onboarding-card .name { font-size: 18px; font-weight: 600; color: #4a4a4a; margin-bottom: 6px; }
+        .onboarding-card .desc { font-size: 13px; color: #999; line-height: 1.5; }
         /* 吃药询问弹窗 */
-        .onboarding-dialog {
-            position: fixed; inset: 0; z-index: 10000;
-            background: rgba(0,0,0,0.3);
-            display: flex; align-items: center; justify-content: center;
-            padding: 24px;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-        .onboarding-dialog.hidden {
-            opacity: 0; visibility: hidden; pointer-events: none;
-        }
+        .onboarding-dialog { position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; padding: 24px; }
+        .onboarding-dialog.hidden { display: none; }
         .onboarding-dialog .dialog-card {
             background: #fff; border-radius: 20px; padding: 32px 28px;
             max-width: 340px; width: 100%; text-align: center;
             box-shadow: 0 10px 40px rgba(0,0,0,0.12);
         }
-        .onboarding-dialog .dialog-card .icon {
-            font-size: 42px; margin-bottom: 10px; display: block;
-        }
-        .onboarding-dialog .dialog-card h3 {
-            font-size: 18px; font-weight: 600; color: #4a4a4a; margin-bottom: 8px;
-        }
-        .onboarding-dialog .dialog-card p {
-            font-size: 14px; color: #888; margin-bottom: 20px; line-height: 1.5;
-        }
-        .onboarding-dialog .dialog-actions {
-            display: flex; gap: 12px; justify-content: center;
-        }
+        .onboarding-dialog .dialog-card .icon { font-size: 42px; margin-bottom: 10px; display: block; }
+        .onboarding-dialog .dialog-card h3 { font-size: 18px; font-weight: 600; color: #4a4a4a; margin-bottom: 8px; }
+        .onboarding-dialog .dialog-card p { font-size: 14px; color: #888; margin-bottom: 20px; line-height: 1.5; }
+        .onboarding-dialog .dialog-actions { display: flex; gap: 12px; justify-content: center; }
         .onboarding-dialog .dialog-actions button {
             padding: 10px 28px; border-radius: 30px; font-size: 15px;
             font-weight: 500; cursor: pointer; transition: all 0.2s;
             border: none;
         }
-        .onboarding-dialog .dialog-actions .btn-yes {
-            background: #4a7c59; color: #fff;
-        }
-        .onboarding-dialog .dialog-actions .btn-yes:hover {
-            background: #3d6b4b;
-        }
-        .onboarding-dialog .dialog-actions .btn-no {
-            background: #f0ebe5; color: #777;
-        }
-        .onboarding-dialog .dialog-actions .btn-no:hover {
-            background: #e5ddd5;
-        }
+        .onboarding-dialog .dialog-actions .btn-yes { background: #4a7c59; color: #fff; }
+        .onboarding-dialog .dialog-actions .btn-yes:hover { background: #3d6b4b; }
+        .onboarding-dialog .dialog-actions .btn-no { background: #f0ebe5; color: #777; }
+        .onboarding-dialog .dialog-actions .btn-no:hover { background: #e5ddd5; }
 
         /* ===== 设置弹窗 ===== */
-        .modal-overlay {
-            position: fixed; inset: 0; z-index: 9000;
-            background: rgba(0,0,0,0.25);
-            display: flex; align-items: center; justify-content: center;
-            padding: 24px;
-            transition: opacity 0.25s, visibility 0.25s;
-        }
-        .modal-overlay.hidden {
-            opacity: 0; visibility: hidden; pointer-events: none;
-        }
+        .modal-overlay { position: fixed; inset: 0; z-index: 9000; background: rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; padding: 24px; }
+        .modal-overlay.hidden { display: none; }
         .modal-card {
             background: #fff; border-radius: 20px; padding: 28px 24px;
             max-width: 380px; width: 100%;
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
         }
-        .modal-card h3 {
-            font-size: 18px; font-weight: 600; color: #4a4a4a; margin-bottom: 16px;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .modal-card .modal-close {
-            border: none; background: #f0ebe5; width: 28px; height: 28px;
-            border-radius: 50%; font-size: 14px; cursor: pointer;
-            color: #888; margin-left: auto;
-        }
-        .modal-card .modal-close:hover { background: #e5ddd5; }
-        .modal-row {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 12px 0; border-bottom: 1px solid #f0ebe5;
-        }
+        .modal-card h3 { font-size: 18px; font-weight: 600; color: #4a4a4a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .modal-card .modal-close { border: none; background: #f0ebe5; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer; color: #888; margin-left: auto; }
+        .modal-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0ebe5; }
         .modal-row:last-child { border-bottom: none; }
-        .modal-row .mlabel {
-            font-size: 14px; color: #555; font-weight: 500;
-        }
-        .modal-row .mval {
-            font-size: 14px; color: #888;
-        }
+        .modal-row .mlabel { font-size: 14px; color: #555; font-weight: 500; }
+        .modal-row .mval { font-size: 14px; color: #888; }
         .modal-row button {
             padding: 6px 16px; border-radius: 20px; font-size: 13px;
             border: 1.5px solid #4a7c59; color: #4a7c59;
-            background: transparent; cursor: pointer; transition: all 0.2s;
+            background: transparent; cursor: pointer;
         }
-        .modal-row button:hover { background: #f0f7ee; }
-
-        /* ===== 身份标签 ===== */
+        /* 身份标签 */
         .profile-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 13px; color: #888; background: #f0ebe5;
-            padding: 4px 14px; border-radius: 20px;
-            margin-left: 8px; cursor: pointer;
-            transition: background 0.2s;
-            vertical-align: middle;
+            display: inline-flex; align-items: center; gap: 6px; font-size: 13px;
+            color: #888; background: #f0ebe5; padding: 4px 14px; border-radius: 20px;
+            margin-left: 8px; cursor: pointer; vertical-align: middle;
         }
-        .profile-badge:hover { background: #e5ddd5; }
-        .profile-badge .dot {
-            width: 8px; height: 8px; border-radius: 50%;
-            background: #4a7c59; display: inline-block;
-        }
-        .btn-settings {
-            border: none; background: transparent; font-size: 20px;
-            cursor: pointer; color: #999; transition: color 0.2s;
-            padding: 4px; vertical-align: middle;
-        }
-        .btn-settings:hover { color: #4a7c59; }
-
-        /* header 右侧按钮区 */
-        .header-actions {
-            display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-            justify-content: flex-end;
-        }
-
-        @media (max-width: 500px) {
-            .onboarding-title { font-size: 22px; }
-            .onboarding-cards { gap: 12px; }
-            .onboarding-card { min-width: 140px; padding: 20px 14px; }
-            .onboarding-card .emoji { font-size: 36px; }
-        }
-
-    
-        /* ===== 零星睡眠折叠区 ===== */
-        .nap-section { margin-top: 16px; border-top: 1px solid #f0ebe5; padding-top: 12px; }
-        .nap-toggle {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 14px; font-weight: 500; color: #888;
-            cursor: pointer; user-select: none; padding: 6px 0;
-            transition: color 0.2s;
-        }
-        .nap-toggle:hover { color: #4a7c59; }
-        .nap-toggle .arrow { font-size: 12px; transition: transform 0.25s; }
-        .nap-toggle .arrow.open { transform: rotate(90deg); }
-        .nap-toggle .hint { font-size: 12px; color: #bbb; margin-left: 6px; font-weight: 400; }
-        .nap-body { display: none; padding: 8px 0 4px; }
-        .nap-body.open { display: block; }
-        .nap-session {
-            display: flex; align-items: center; gap: 8px;
-            margin-bottom: 8px; flex-wrap: wrap;
-            padding: 8px 12px; background: #fcfaf8;
-            border-radius: 12px; border: 1px solid #f0ebe5;
-        }
-        .nap-session .nlbl { font-size: 13px; font-weight: 500; color: #888; min-width: 48px; }
-        .nap-session input[type="time"] {
-            padding: 6px 10px; border: 1.5px solid #e8e0d8; border-radius: 10px;
-            font-size: 13px; background: #fff; outline: none;
-            min-width: 90px;
-        }
-        .nap-session input[type="time"]:focus { border-color: #4a7c59; }
-        .nap-session input[type="text"] {
-            flex: 1; min-width: 80px; padding: 6px 10px;
-            border: 1.5px solid #e8e0d8; border-radius: 10px;
-            font-size: 13px; background: #fff; outline: none;
-        }
-        .nap-session input[type="text"]:focus { border-color: #4a7c59; }
-        .nap-session .nclose {
-            border: none; background: transparent; color: #ccc;
-            font-size: 16px; cursor: pointer; padding: 0 4px; line-height: 1;
-        }
-        .nap-session .nclose:hover { color: #e87171; }
-        .nap-add-btn {
-            padding: 5px 16px; border: 1.5px dashed #c8c0b6; border-radius: 20px;
-            font-size: 13px; color: #999; background: transparent;
-            cursor: pointer; transition: all 0.2s; margin-top: 2px;
-        }
-        .nap-add-btn:hover { border-color: #4a7c59; color: #4a7c59; background: #f8fbf6; }
+        .profile-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: #4a7c59; display: inline-block; }
+        .btn-settings { border: none; background: transparent; font-size: 20px; cursor: pointer; color: #999; padding: 4px; vertical-align: middle; }
+        .header-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 
         /* ===== 吃药记录 ===== */
         .med-section { display: none; }
         .med-section.visible { display: block; }
-        .med-record {
-            display: flex; align-items: center; gap: 10px;
-            margin-bottom: 8px; flex-wrap: wrap;
-            padding: 8px 12px; background: #fcfaf8;
-            border-radius: 12px; border: 1px solid #f0ebe5;
-        }
-        .med-record .mlbl { font-size: 13px; font-weight: 500; color: #888; min-width: 48px; }
-        .med-record input[type="time"] {
-            padding: 6px 10px; border: 1.5px solid #e8e0d8; border-radius: 10px;
-            font-size: 13px; background: #fff; outline: none; min-width: 90px;
-        }
-        .med-record input[type="time"]:focus { border-color: #4a7c59; }
-        .med-record input[type="number"] {
-            width: 56px; padding: 6px 8px; border: 1.5px solid #e8e0d8;
-            border-radius: 10px; font-size: 13px; background: #fff; outline: none;
-        }
-        .med-record input[type="number"]:focus { border-color: #4a7c59; }
+        .med-record { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; padding: 8px 12px; background: #fcfaf8; border-radius: 12px; border: 1px solid #f0ebe5; }
+        .med-record input[type="time"] { padding: 6px 10px; border: 1.5px solid #e8e0d8; border-radius: 10px; font-size: 13px; background: #fff; outline: none; min-width: 90px; }
+        .med-record input[type="number"] { width: 56px; padding: 6px 8px; border: 1.5px solid #e8e0d8; border-radius: 10px; font-size: 13px; background: #fff; outline: none; }
         .med-record .munit { font-size: 13px; color: #aaa; }
-        .med-record input[type="text"] {
-            flex: 1; min-width: 80px; padding: 6px 10px;
-            border: 1.5px solid #e8e0d8; border-radius: 10px;
-            font-size: 13px; background: #fff; outline: none;
-        }
-        .med-record input[type="text"]:focus { border-color: #4a7c59; }
-        .med-record .mclose {
-            border: none; background: transparent; color: #ccc;
-            font-size: 16px; cursor: pointer; padding: 0 4px; line-height: 1;
-        }
-        .med-record .mclose:hover { color: #e87171; }
-        .med-add-btn {
-            padding: 5px 16px; border: 1.5px dashed #c8c0b6; border-radius: 20px;
-            font-size: 13px; color: #999; background: transparent;
-            cursor: pointer; transition: all 0.2s; margin-top: 2px;
-        }
-        .med-add-btn:hover { border-color: #4a7c59; color: #4a7c59; background: #f8fbf6; }
-        .med-empty {
-            font-size: 13px; color: #bbb; text-align: center; padding: 12px 0;
+        .med-record input[type="text"] { flex: 1; min-width: 80px; padding: 6px 10px; border: 1.5px solid #e8e0d8; border-radius: 10px; font-size: 13px; background: #fff; outline: none; }
+        .med-record .mclose { border: none; background: transparent; color: #ccc; font-size: 16px; cursor: pointer; }
+        .med-add-btn { padding: 5px 16px; border: 1.5px dashed #c8c0b6; border-radius: 20px; font-size: 13px; color: #999; background: transparent; cursor: pointer; }
+        .med-add-btn:hover { border-color: #4a7c59; color: #4a7c59; }
+        .med-empty { font-size: 13px; color: #bbb; text-align: center; padding: 12px 0; }
+        
+        @media (max-width: 500px) {
+            .onboarding-title { font-size: 22px; }
+            .onboarding-cards { gap: 12px; }
+            .onboarding-card { min-width: 140px; padding: 20px 14px; }
         }
 
     </style>
-</head>
-<body>
-
 </head>
 <body>
 
@@ -1055,24 +899,17 @@
                 <div class="form-row" style="flex-direction:column;align-items:stretch;">
                     <label>📝 复盘 / 备注</label>
                     <textarea id="sleepNotes" placeholder="比如：今天为什么清醒次数多？喝了咖啡？压力大？睡眠质量如何？……&#10;写下来，周总结的时候会汇总到一起看。"></textarea>
+                                <div class="form-row">
+                    <label class="label-wide">😴 零星睡眠</label>
+                    <input type="number" id="napMinutes" min="0" max="480" step="5" placeholder="0" style="width:70px;">
+                    <span class="unit">分钟</span>
+                    <span style="font-size:12px;color:#aaa;">（午睡或零星小睡总时长）</span>
                 </div>
-                    <!-- 零星睡眠（折叠） -->
-                    <div class="nap-section">
-                        <div class="nap-toggle" onclick="toggleNapSection()">
-                            <span class="arrow" id="napArrow">▶</span>
-                            零星睡眠 / 午睡
-                            <span class="hint" id="napHint">（需要时展开记录）</span>
-                        </div>
-                        <div class="nap-body" id="napBody">
-                            <div id="napSessions">
-                                <!-- 由 JS 动态生成 -->
-                            </div>
-                            <button class="nap-add-btn" onclick="addNapSession()">＋ 添加一次零星睡眠</button>
-                        </div>
-                    </div>
+</div>
+                                <!-- 零星睡眠（折叠） -->
             </div>
 
-            <!-- 运动 -->
+<!-- 运动 --><!-- 运动 -->
             <div class="card">
                 <div class="card-title"><span class="icon">🏃</span> 运动记录</div>
                 <div style="font-size:13px;color:#999;margin:-8px 0 12px;">可以记录多次运动，每次选种类和时长</div>
@@ -1125,7 +962,7 @@
                 </div>
             </div>
 
-              <!-- 吃药记录（养生党专用） -->
+                          <!-- 吃药记录（养生党专用） -->
               <div class="card med-section" id="medCard">
                   <div class="card-title"><span class="icon">💊</span> 吃药记录</div>
                   <div style="font-size:13px;color:#999;margin:-8px 0 12px;">每次吃药时记录时间和次数</div>
@@ -1135,11 +972,12 @@
                   <button class="med-add-btn" onclick="addMedRecord()">＋ 添加一次吃药记录</button>
               </div>
 
-            <!-- 保存 -->
+            <!-- 保存 --><!-- 保存 -->
             <div class="save-area">
                 <button class="btn-save" id="saveBtn" onclick="saveDaily()">💾 保存今日记录</button>
                 <div class="save-toast" id="saveToast">✅ 已保存！</div>
             </div>
+            <div id="storageInfo" style="text-align:center;font-size:11px;color:#bbb;padding-bottom:16px;"></div>
         </div>
 
         <!-- ============================================================ -->
@@ -1247,8 +1085,7 @@
 
     </div>
 
-<script>
-
+    <script>
         // ================================================================
         //  工具函数
         // ================================================================
@@ -1310,59 +1147,163 @@
         // ================================================================
         let currentViewDate = todayStr();
 
-        // ---- 存储抽象层 ----
-        // 现在使用 localStorage，未来可替换为后端 API
-        const storage = {
-            _prefix: 'health_daily_',
-            get(key) {
-                try { return JSON.parse(localStorage.getItem(this._prefix + key) || 'null'); } catch { return null; }
-            },
-            set(key, data) {
-                localStorage.setItem(this._prefix + key, JSON.stringify(data));
+        // ================================================================
+        //  数据读写 (IndexedDB + 内存缓存)
+        // ================================================================
+        const DB_NAME = 'healthJournalDB';
+        const STORE_NAME = 'healthStore';
+        let _dataCache = {};
+        let _profileCache = null;
+        let _dbReady = false;
+        let _db = null;
+
+        function idbOpen() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(DB_NAME, 1);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME);
+                    }
+                };
+                req.onsuccess = (e) => { _db = e.target.result; resolve(_db); };
+                req.onerror = (e) => reject(e.target.error);
+            });
+        }
+
+        function idbGet(key) {
+            return new Promise((resolve) => {
+                if (!_db) { resolve(null); return; }
+                try {
+                    const tx = _db.transaction(STORE_NAME, 'readonly');
+                    const store = tx.objectStore(STORE_NAME);
+                    const req = store.get(key);
+                    req.onsuccess = () => resolve(req.result ?? null);
+                    req.onerror = () => resolve(null);
+                } catch(e) { resolve(null); }
+            });
+        }
+
+        function idbSet(key, data) {
+            return new Promise((resolve) => {
+                if (!_db) { resolve(false); return; }
+                try {
+                    const tx = _db.transaction(STORE_NAME, 'readwrite');
+                    const store = tx.objectStore(STORE_NAME);
+                    const req = store.put(data, key);
+                    req.onsuccess = () => resolve(true);
+                    req.onerror = () => resolve(false);
+                } catch(e) { resolve(false); }
+            });
+        }
+
+        async function migrateFromLocalStorage() {
+            const oldData = localStorage.getItem('health_daily_data');
+            const oldProfile = localStorage.getItem('health_daily_profile');
+            let migrated = false;
+            if (oldData) {
+                try {
+                    const data = JSON.parse(oldData);
+                    const existing = await idbGet('data');
+                    if (!existing || Object.keys(existing).length === 0) {
+                        await idbSet('data', data);
+                        _dataCache = data;
+                        localStorage.removeItem('health_daily_data');
+                        migrated = true;
+                    }
+                } catch(e) {}
             }
-        };
-
-        function getData() {
-            return storage.get('data') || {};
+            if (oldProfile) {
+                try {
+                    const profile = JSON.parse(oldProfile);
+                    const existing = await idbGet('profile');
+                    if (!existing) {
+                        await idbSet('profile', profile);
+                        _profileCache = profile;
+                        localStorage.removeItem('health_daily_profile');
+                    }
+                } catch(e) {}
+            }
+            return migrated;
         }
 
-        function setData(data) {
-            storage.set('data', data);
+        async function initStorage() {
+            try {
+                await idbOpen();
+                const migrated = await migrateFromLocalStorage();
+                if (_dataCache === undefined || Object.keys(_dataCache).length === 0) {
+                    const stored = await idbGet('data');
+                    if (stored && typeof stored === 'object' && !Array.isArray(stored)) _dataCache = stored;
+                }
+                if (_profileCache === null) {
+                    const p = await idbGet('profile');
+                    if (p) _profileCache = p;
+                }
+                _dbReady = true;
+                if (migrated) {
+                    setTimeout(() => {
+                        const toast = document.getElementById('saveToast');
+                        if (toast) { toast.textContent = '✅ 数据已迁移到新存储，更稳定更安全！'; toast.classList.add('show');
+                        setTimeout(() => { toast.textContent = '✅ 已保存！'; toast.classList.remove('show'); }, 3000); }
+                    }, 800);
+                }
+            } catch(e) {
+                console.warn('IndexedDB 不可用，回退到 localStorage');
+                const oldData = localStorage.getItem('health_daily_data');
+                if (oldData) { try { _dataCache = JSON.parse(oldData); } catch(e2) {} }
+                const oldProfile = localStorage.getItem('health_daily_profile');
+                if (oldProfile) { try { _profileCache = JSON.parse(oldProfile); } catch(e2) {} }
+                _dbReady = false;
+            }
+            renderStorageInfo();
         }
 
-        function getDayData(dateStr) {
-            const data = getData();
-            return data[dateStr] || null;
+        function getData() { return _dataCache; }
+
+        async function setData(data) {
+            _dataCache = data;
+            if (_dbReady) {
+                const ok = await idbSet('data', data);
+                if (!ok) {
+                    try { localStorage.setItem('health_daily_backup', JSON.stringify(data)); } catch(e) {}
+                }
+            } else {
+                try { localStorage.setItem('health_daily_data', JSON.stringify(data)); } catch(e) {}
+            }
+            renderStorageInfo();
         }
 
-        function saveDayData(dateStr, record) {
-            const data = getData();
-            data[dateStr] = record;
-            setData(data);
+        function getDayData(dateStr) { return _dataCache[dateStr] || null; }
+
+        async function saveDayData(dateStr, record) {
+            _dataCache[dateStr] = record;
+            await setData(_dataCache);
+        }
+
+        function renderStorageInfo() {
+            const el = document.getElementById('storageInfo');
+            if (!el) return;
+            const count = Object.keys(_dataCache).length;
+            const raw = JSON.stringify(_dataCache);
+            const kb = (new Blob([raw]).size / 1024).toFixed(1);
+            const pct = _dbReady ? '' : ' (备)';
+            el.textContent = '📦 已记录 ' + count + ' 天 · ' + kb + ' KB' + pct;
         }
 
         // ---- 用户配置 ----
-        function getProfile() {
-            return storage.get('profile') || null;
+        function getProfile() { return _profileCache; }
+
+        async function setProfile(profile) {
+            _profileCache = profile;
+            if (_dbReady) await idbSet('profile', profile);
+            else try { localStorage.setItem('health_daily_profile', JSON.stringify(profile)); } catch(e) {}
         }
 
-        function setProfile(profile) {
-            storage.set('profile', profile);
-        }
+        function hasProfile() { return _profileCache !== null; }
 
-        function hasProfile() {
-            return getProfile() !== null;
-        }
+        function isWellness() { return _profileCache && _profileCache.identity === 'wellness'; }
 
-        function isWellness() {
-            const p = getProfile();
-            return p && p.identity === 'wellness';
-        }
-
-        function shouldTrackMedication() {
-            const p = getProfile();
-            return p && p.identity === 'wellness' && p.trackMedication === true;
-        }
+        function shouldTrackMedication() { return _profileCache && _profileCache.identity === 'wellness' && _profileCache.trackMedication === true; }
 
         // ================================================================
         //  睡眠时长计算
@@ -1557,6 +1498,12 @@
                     document.getElementById('deepSleepPct').value = dayData.sleep.deepSleepPct ?? '';
                     document.getElementById('awakeCount').value = dayData.sleep.awakeCount ?? '0';
                     document.getElementById('sleepNotes').value = dayData.sleep.notes || '';
+                    // 加载零星睡眠数据
+                    if (dayData.sleep.naps && dayData.sleep.naps.length > 0) {
+                        document.getElementById('napMinutes').value = dayData.sleep.naps[0].durationMin || '';
+                    } else {
+                        document.getElementById('napMinutes').value = '';
+                    }
                     calcSleepDuration();
                 }
                 // ---- 运动 ----
@@ -1653,62 +1600,83 @@
         // ================================================================
         //  保存当前选定日期的记录
         // ================================================================
-        function saveDaily() {
-            const dateStr = currentViewDate;
+        async function saveDaily() {
+            try {
+                const btn = document.getElementById('saveBtn');
+                btn.disabled = true;
+                btn.textContent = '⏳ 保存中...';
 
-            // ---- 睡眠 ----
-            const bedtime = document.getElementById('sleepBedtime').value;
-            const wakeTime = document.getElementById('sleepWakeTime').value;
-            const deepSleepPct = document.getElementById('deepSleepPct').value;
-            const awakeCount = document.getElementById('awakeCount').value;
-            const sleepNotes = document.getElementById('sleepNotes').value.trim();
+                const dateStr = currentViewDate;
 
-            let durationMin = null;
-            if (bedtime && wakeTime) {
-                const [bh, bm] = bedtime.split(':').map(Number);
-                const [wh, wm] = wakeTime.split(':').map(Number);
-                let dm = (wh * 60 + wm) - (bh * 60 + bm);
-                if (dm < 0) dm += 24 * 60;
-                durationMin = dm;
-            }
+                // ---- 睡眠 ----
+                const bedtime = document.getElementById('sleepBedtime').value;
+                const wakeTime = document.getElementById('sleepWakeTime').value;
+                const deepSleepPct = document.getElementById('deepSleepPct').value;
+                const awakeCount = document.getElementById('awakeCount').value;
+                const sleepNotes = document.getElementById('sleepNotes').value.trim();
 
-            const sleep = {
-                bedtime: bedtime || '',
-                wakeTime: wakeTime || '',
-                durationMin: durationMin,
-                deepSleepPct: deepSleepPct !== '' ? +deepSleepPct : null,
-                awakeCount: awakeCount !== '' ? +awakeCount : 0,
-                notes: sleepNotes,
-                naps: collectNaps()
-            };
+                let durationMin = null;
+                if (bedtime && wakeTime) {
+                    const [bh, bm] = bedtime.split(':').map(Number);
+                    const [wh, wm] = wakeTime.split(':').map(Number);
+                    let dm = (wh * 60 + wm) - (bh * 60 + bm);
+                    if (dm < 0) dm += 24 * 60;
+                    durationMin = dm;
+                }
 
-            // ---- 运动 ----
-            const sessions = collectExerciseSessions().filter(s => s.duration != null && s.duration > 0);
-            const exercise = { sessions };
-
-            // ---- 饮食 ----
-            const diet = {};
-            MEALS.forEach(m => {
-                const toggle = document.getElementById(m + 'Toggle');
-                const content = document.getElementById(m + 'Content');
-                const feeling = document.getElementById(m + 'Feeling');
-                const ate = toggle.textContent.includes('✅');
-                diet[m] = {
-                    ate: ate,
-                    content: ate ? content.value.trim() : '',
-                    feeling: ate ? feeling.value.trim() : ''
+                const sleep = {
+                    bedtime: bedtime || '',
+                    wakeTime: wakeTime || '',
+                    durationMin: durationMin,
+                    deepSleepPct: deepSleepPct !== '' ? +deepSleepPct : null,
+                    awakeCount: awakeCount !== '' ? +awakeCount : 0,
+                    notes: sleepNotes,
+                    naps: collectNaps()
                 };
-            });
 
-            const medication = { records: collectMedRecords() };
-            const record = { sleep, exercise, diet, medication };
-            saveDayData(dateStr, record);
+                // ---- 运动 ----
+                const sessions = collectExerciseSessions().filter(s => s.duration != null && s.duration > 0);
+                const exercise = { sessions };
 
-            const toast = document.getElementById('saveToast');
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
-            // 刷新周日历条以显示新保存的数据标记
-            renderWeekStrip(currentViewDate);
+                // ---- 饮食 ----
+                const diet = {};
+                MEALS.forEach(m => {
+                    const toggle = document.getElementById(m + 'Toggle');
+                    const content = document.getElementById(m + 'Content');
+                    const feeling = document.getElementById(m + 'Feeling');
+                    const ate = toggle.textContent.includes('✅');
+                    diet[m] = {
+                        ate: ate,
+                        content: ate ? content.value.trim() : '',
+                        feeling: ate ? feeling.value.trim() : ''
+                    };
+                });
+
+                const medication = { records: collectMedRecords() };
+                const record = { sleep, exercise, diet, medication };
+                await saveDayData(dateStr, record);
+
+                const toast = document.getElementById('saveToast');
+                toast.textContent = '✅ 已保存！';
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+                renderWeekStrip(currentViewDate);
+                renderStorageInfo();
+            } catch(e) {
+                const toast = document.getElementById('saveToast');
+                toast.textContent = '❌ 保存失败！';
+                toast.style.color = '#e87171';
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    toast.style.color = '#4a7c59';
+                    toast.textContent = '✅ 已保存！';
+                }, 4000);
+            } finally {
+                const btn = document.getElementById('saveBtn');
+                btn.disabled = false;
+                btn.textContent = '💾 保存今日记录';
+            }
         }
 
         // ================================================================
@@ -2018,18 +1986,18 @@
             URL.revokeObjectURL(url);
         }
 
-        function importData(event) {
+        async function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = async function(e) {
                 try {
                     const imported = JSON.parse(e.target.result);
                     const current = getData();
                     for (const key of Object.keys(imported)) {
                         current[key] = imported[key];
                     }
-                    setData(current);
+                    await setData(current);
                     alert('✅ 导入成功！共导入 ' + Object.keys(imported).length + ' 条记录。');
                     if (currentTab === 'daily') loadDate(currentViewDate);
                     else renderWeekly();
@@ -2044,13 +2012,10 @@
         // ================================================================
         //  初始化
         // ================================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            // 首次使用 → 展示身份选择
-            if (!hasProfile()) {
-                showOnboarding();
-            } else {
-                updateProfileUI();
-            }
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initStorage();
+            if (!hasProfile()) showOnboarding();
+            else updateProfileUI();
             loadDate(todayStr());
             document.addEventListener('keydown', function(e) {
                 if ((e.ctrlKey || e.metaKey) && e.key === 's') {
@@ -2059,9 +2024,145 @@
                 }
             });
         });
-    
 
+        // 注册 Service Worker（PWA 离线支持）
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(function() {
+                console.log('SW registered');
+            }).catch(function(err) {
+                console.log('SW failed:', err);
+            });
+        }
     
+        // ================================================================
+        //  零星睡眠 / 午睡
+        // ================================================================
+                
+
+                function collectNaps() {
+            const val = document.getElementById('napMinutes')?.value;
+            if (val && +val > 0) {
+                return [{ durationMin: +val }];
+            }
+            return [];
+        }
+
+// ================================================================
+        //  吃药记录
+        // ================================================================
+        let medCount=0;
+        function createMedRecordHTML(i,t,d,n) {
+            return `<div class="med-record" data-med-index="${i}"><span class="mlbl">第${i+1}次</span><input type="time" class="med-time" value="${t||''}" placeholder="时间"><input type="number" class="med-dosage" value="${d||''}" min="0" max="99" step="0.5"><span class="munit">次/粒</span><input type="text" class="med-notes" value="${n||''}" placeholder="备注"><button class="mclose" onclick="removeMedRecord(this)">✕</button></div>`;
+        }
+        function renderMedRecords(r) {
+            const c=document.getElementById('medRecords');const d=r||[];medCount=d.length;
+            c.innerHTML=d.length?d.map((r,i)=>createMedRecordHTML(i,r.time,r.dosage,r.notes)).join(''):'<div class="med-empty">今天还没记录吃药</div>';
+        }
+        function addMedRecord() {
+            const c=document.getElementById('medRecords');if(c.querySelector('.med-empty'))c.innerHTML='';
+            c.insertAdjacentHTML('beforeend',createMedRecordHTML(medCount,'','',''));medCount++;
+        }
+        function removeMedRecord(b) {
+            const r=b.closest('.med-record');r.remove();medCount--;
+            document.querySelectorAll('.med-record').forEach((r,i)=>{r.dataset.medIndex=i;r.querySelector('.mlbl').textContent='第'+(i+1)+'次';});
+            if(!document.querySelectorAll('.med-record').length)document.getElementById('medRecords').innerHTML='<div class="med-empty">今天还没记录吃药</div>';
+        }
+        function collectMedRecords() {
+            const records=[];
+            document.querySelectorAll('.med-record').forEach(r=>{
+                const t=r.querySelector('.med-time').value,d=r.querySelector('.med-dosage').value,n=r.querySelector('.med-notes').value.trim();
+                if(t&&d)records.push({time:t,dosage:d!==''?+d:null,notes:n});
+            });
+            return records;
+        }
+
+        // ================================================================
+        //  身份选择 / 设置
+        // ================================================================
+        const IDENTITY_LABELS={office:'💼 上班族',wellness:'🌿 养生党'};
+        function showOnboarding(){document.getElementById('onboardingOverlay').classList.remove('hidden');}
+        function selectIdentity(id){if(id==='wellness')document.getElementById('medDialog').classList.remove('hidden');else setProfileAndFinish(id,false);}
+        async function setProfileAndFinish(identity,trackMed){
+            document.getElementById('medDialog').classList.add('hidden');
+            await setProfile({identity:identity,trackMedication:trackMed});
+            document.getElementById('onboardingOverlay').classList.add('hidden');
+            updateProfileUI();
+            updateSectionVisibility();
+            if(currentTab==='daily')loadDate(currentViewDate);else renderWeekly();
+        }
+        function updateProfileUI(){
+            const p=getProfile(),badge=document.getElementById('profileBadge'),text=document.getElementById('profileBadgeText');
+            if(p){badge.classList.remove('hidden');text.textContent=IDENTITY_LABELS[p.identity]||p.identity;}
+            else badge.classList.add('hidden');
+        }
+        function showSettings(){
+            const p=getProfile();if(!p)return;
+            document.getElementById('settingsIdentity').textContent=IDENTITY_LABELS[p.identity]||p.identity;
+            document.getElementById('settingsMed').textContent=p.identity==='wellness'?(p.trackMedication?'✅ 记录':'❌ 不记录'):'—';
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+        function hideSettings(){document.getElementById('settingsModal').classList.add('hidden');}
+        async function resetProfile(){hideSettings();await setProfile(null);showOnboarding();}
+        function updateSectionVisibility(){
+            const mc=document.getElementById('medCard');
+            if(shouldTrackMedication())mc.classList.add('visible');else mc.classList.remove('visible');
+        }
+        document.addEventListener('click',function(e){
+            if(e.target===document.getElementById('settingsModal'))hideSettings();
+            if(e.target===document.getElementById('medDialog'))document.getElementById('medDialog').classList.add('hidden');
+        });
+
 </script>
+
+    <!-- ========== 身份选择引导页 ========== -->
+    <div class="onboarding-overlay hidden" id="onboardingOverlay">
+        <div class="onboarding-title">🌿 欢迎使用健康小记</div>
+        <div class="onboarding-sub">先告诉我你的身份，我会帮你定制记录内容</div>
+        <div class="onboarding-cards">
+            <div class="onboarding-card" onclick="selectIdentity('office')">
+                <span class="emoji">💼</span>
+                <div class="name">上班族</div>
+                <div class="desc">记录睡眠、饮食、运动，<br>保持工作状态</div>
+            </div>
+            <div class="onboarding-card" onclick="selectIdentity('wellness')">
+                <span class="emoji">🌿</span>
+                <div class="name">养生党</div>
+                <div class="desc">关注作息调理，<br>搭配健康管理</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 吃药询问弹窗 ========== -->
+    <div class="onboarding-dialog hidden" id="medDialog">
+        <div class="dialog-card">
+            <span class="icon">💊</span>
+            <h3>需要记录吃药吗？</h3>
+            <p>如果你有固定服药需求，可以帮你记录<br>每天的吃药时间和次数</p>
+            <div class="dialog-actions">
+                <button class="btn-yes" onclick="setProfileAndFinish('wellness', true)">需要记录</button>
+                <button class="btn-no" onclick="setProfileAndFinish('wellness', false)">不需要</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 设置弹窗 ========== -->
+    <div class="modal-overlay hidden" id="settingsModal">
+        <div class="modal-card">
+            <h3>⚙️ 设置 <button class="modal-close" onclick="hideSettings()">✕</button></h3>
+            <div class="modal-row">
+                <span class="mlabel">当前身份</span>
+                <span class="mval" id="settingsIdentity">--</span>
+            </div>
+            <div class="modal-row">
+                <span class="mlabel">记录吃药</span>
+                <span class="mval" id="settingsMed">--</span>
+            </div>
+            <div class="modal-row">
+                <span class="mlabel">切换身份</span>
+                <button onclick="resetProfile()">重新选择</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
