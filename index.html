@@ -806,24 +806,6 @@
         .btn-settings { border: none; background: transparent; font-size: 20px; cursor: pointer; color: #999; padding: 4px; vertical-align: middle; }
         .header-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 
-        /* ===== 零星睡眠折叠区 ===== */
-        .nap-section { margin-top: 16px; border-top: 1px solid #f0ebe5; padding-top: 12px; }
-        .nap-toggle { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; color: #888; cursor: pointer; padding: 6px 0; }
-        .nap-toggle:hover { color: #4a7c59; }
-        .nap-toggle .arrow { font-size: 12px; transition: transform 0.25s; }
-        .nap-toggle .arrow.open { transform: rotate(90deg); }
-        .nap-toggle .hint { font-size: 12px; color: #bbb; }
-        .nap-body { display: none; padding: 8px 0 4px; }
-        .nap-body.open { display: block; }
-        .nap-session { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; padding: 8px 12px; background: #fcfaf8; border-radius: 12px; border: 1px solid #f0ebe5; }
-        .nap-session input[type="time"] { padding: 6px 10px; border: 1.5px solid #e8e0d8; border-radius: 10px; font-size: 13px; background: #fff; outline: none; min-width: 90px; }
-        .nap-session input[type="time"]:focus { border-color: #4a7c59; }
-        .nap-session input[type="text"] { flex: 1; min-width: 80px; padding: 6px 10px; border: 1.5px solid #e8e0d8; border-radius: 10px; font-size: 13px; background: #fff; outline: none; }
-        .nap-session .nclose { border: none; background: transparent; color: #ccc; font-size: 16px; cursor: pointer; }
-        .nap-session .nclose:hover { color: #e87171; }
-        .nap-add-btn { padding: 5px 16px; border: 1.5px dashed #c8c0b6; border-radius: 20px; font-size: 13px; color: #999; background: transparent; cursor: pointer; }
-        .nap-add-btn:hover { border-color: #4a7c59; color: #4a7c59; }
-
         /* ===== 吃药记录 ===== */
         .med-section { display: none; }
         .med-section.visible { display: block; }
@@ -917,24 +899,17 @@
                 <div class="form-row" style="flex-direction:column;align-items:stretch;">
                     <label>📝 复盘 / 备注</label>
                     <textarea id="sleepNotes" placeholder="比如：今天为什么清醒次数多？喝了咖啡？压力大？睡眠质量如何？……&#10;写下来，周总结的时候会汇总到一起看。"></textarea>
+                                <div class="form-row">
+                    <label class="label-wide">😴 零星睡眠</label>
+                    <input type="number" id="napMinutes" min="0" max="480" step="5" placeholder="0" style="width:70px;">
+                    <span class="unit">分钟</span>
+                    <span style="font-size:12px;color:#aaa;">（午睡或零星小睡总时长）</span>
                 </div>
+</div>
                                 <!-- 零星睡眠（折叠） -->
-                    <div class="nap-section">
-                        <div class="nap-toggle" onclick="toggleNapSection()">
-                            <span class="arrow" id="napArrow">▶</span>
-                            零星睡眠 / 午睡
-                            <span class="hint" id="napHint">（需要时展开记录）</span>
-                        </div>
-                        <div class="nap-body" id="napBody">
-                            <div id="napSessions">
-                                <!-- 由 JS 动态生成 -->
-                            </div>
-                            <button class="nap-add-btn" onclick="addNapSession()">＋ 添加一次零星睡眠</button>
-                        </div>
-                    </div>
             </div>
 
-            <!-- 运动 --><!-- 运动 -->
+<!-- 运动 --><!-- 运动 -->
             <div class="card">
                 <div class="card-title"><span class="icon">🏃</span> 运动记录</div>
                 <div style="font-size:13px;color:#999;margin:-8px 0 12px;">可以记录多次运动，每次选种类和时长</div>
@@ -1933,38 +1908,17 @@
         // ================================================================
         //  零星睡眠 / 午睡
         // ================================================================
-        let napCount = 0, napOpen = false;
-        function toggleNapSection() {
-            const body = document.getElementById('napBody');
-            const arrow = document.getElementById('napArrow');
-            napOpen = !napOpen;
-            body.classList.toggle('open', napOpen);
-            arrow.classList.toggle('open', napOpen);
-        }
-        function createNapHTML(i,s,e,n) {
-            return `<div class="nap-session" data-nap-index="${i}"><span class="nlbl">第${i+1}次</span><input type="time" class="nap-start" value="${s||''}" placeholder="开始"><span style="font-size:13px;color:#aaa;">→</span><input type="time" class="nap-end" value="${e||''}" placeholder="结束"><input type="text" class="nap-notes" value="${n||''}" placeholder="备注"><button class="nclose" onclick="removeNap(this)">✕</button></div>`;
-        }
-        function renderNapSessions(s) {
-            const c=document.getElementById('napSessions');const d=s||[];napCount=d.length;
-            c.innerHTML=d.map((r,i)=>createNapHTML(i,r.startTime,r.endTime,r.notes)).join('');
-        }
-        function addNapSession() {
-            document.getElementById('napSessions').insertAdjacentHTML('beforeend',createNapHTML(napCount,'','',''));napCount++;
-        }
-        function removeNap(btn) {
-            btn.closest('.nap-session').remove();napCount--;
-            document.querySelectorAll('.nap-session').forEach((r,i)=>{r.dataset.napIndex=i;r.querySelector('.nlbl').textContent='第'+(i+1)+'次';});
-        }
-        function collectNaps() {
-            const naps=[];
-            document.querySelectorAll('.nap-session').forEach(r=>{
-                const st=r.querySelector('.nap-start').value, et=r.querySelector('.nap-end').value, nt=r.querySelector('.nap-notes').value.trim();
-                if(st&&et)naps.push({startTime:st,endTime:et,notes:nt});
-            });
-            return naps;
+                
+
+                function collectNaps() {
+            const val = document.getElementById('napMinutes')?.value;
+            if (val && +val > 0) {
+                return [{ durationMin: +val }];
+            }
+            return [];
         }
 
-        // ================================================================
+// ================================================================
         //  吃药记录
         // ================================================================
         let medCount=0;
