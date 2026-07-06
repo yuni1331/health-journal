@@ -1,4 +1,4 @@
-const CACHE_NAME = 'health-journal-v2';
+const CACHE_NAME = 'health-journal-v1';
 const ASSETS = [
   '.',
   'index.html',
