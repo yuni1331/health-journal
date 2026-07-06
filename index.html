@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -818,6 +818,22 @@
         .med-add-btn { padding: 5px 16px; border: 1.5px dashed #c8c0b6; border-radius: 20px; font-size: 13px; color: #999; background: transparent; cursor: pointer; }
         .med-add-btn:hover { border-color: #4a7c59; color: #4a7c59; }
         .med-empty { font-size: 13px; color: #bbb; text-align: center; padding: 12px 0; }
+        .med-diary textarea:focus { border-color: #4a7c59; background: #fff; }
+        /* ===== 喝水记录 ===== */
+        .water-section { display: none; }
+        .water-section.visible { display: block; }
+        .water-cup-select { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+        .water-cup-select .cup-label { font-size: 13px; color: #777; font-weight: 500; white-space: nowrap; }
+        .water-cup-option { padding: 6px 14px; border-radius: 20px; border: 1.5px solid #e0ddd5; background: #fff; font-size: 13px; color: #888; cursor: pointer; transition: all 0.2s; }
+        .water-cup-option:hover { border-color: #7eb8da; color: #5a9ab8; }
+        .water-cup-option.selected { background: #e8f4fa; border-color: #7eb8da; color: #4a8ba8; font-weight: 600; }
+        .water-counter { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .water-counter .water-btn { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #d0e8f4; background: #f5fafd; font-size: 22px; color: #7eb8da; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .water-counter .water-btn:hover { background: #e0f0f8; border-color: #5a9ab8; color: #5a9ab8; transform: scale(1.05); }
+        .water-counter .water-btn.minus { font-size: 26px; line-height: 1; padding-bottom: 3px; }
+        .water-counter .water-count { font-size: 28px; font-weight: 700; color: #4a8ba8; min-width: 40px; text-align: center; }
+        .water-counter .water-total { font-size: 13px; color: #999; margin-left: 8px; }
+        .water-counter .water-reset { padding: 4px 12px; border: none; background: #f0ebe5; border-radius: 14px; font-size: 12px; color: #999; cursor: pointer; }
         
         @media (max-width: 500px) {
             .onboarding-title { font-size: 22px; }
@@ -826,24 +842,26 @@
         }
 
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <!-- ========== 顶部 ========== -->
     <div class="header">
         <div>
-            <h1>🌿 健康小记</h1>
+            <h1>⚡ 健康小记</h1>
             <div class="sub">每天3分钟，记录你的健康</div>
         </div>
-        <div class="header-actions">
+        
+<div class="header-actions">
             <span id="profileBadge" class="profile-badge hidden" onclick="showSettings()">
                 <span class="dot"></span>
                 <span id="profileBadgeText">--</span>
             </span>
-            <button class="btn-settings" onclick="showSettings()" title="设置">⚙️</button>
-            <button class="btn-export" onclick="exportData()">📥 导出数据</button>
+            <button class="btn-settings" onclick="showSettings()" title="设置">🔮</button>
+            <button class="btn-export" onclick="exportData()">⬇️ 导出数据</button>
             <span class="btn-import-wrap">
-                <button class="btn-import">📤 导入</button>
+                <button class="btn-import">⬆️ 导入</button>
                 <input type="file" accept=".json" onchange="importData(event)">
             </span>
         </div>
@@ -851,8 +869,8 @@
 
     <!-- ========== Tab ========== -->
     <div class="tabs">
-        <button class="active" data-tab="daily" onclick="switchTab('daily')">📝 每日记录</button>
-        <button data-tab="weekly" onclick="switchTab('weekly')">📊 周总结</button>
+        <button class="active" data-tab="daily" onclick="switchTab('daily')">📆 每日记录</button>
+        <button data-tab="weekly" onclick="switchTab('weekly')">📈 周总结</button>
     </div>
 
     <div class="container">
@@ -864,9 +882,9 @@
 
             <!-- 日期导航栏 -->
             <div class="date-nav">
-                <button class="nav-arrow" onclick="navigateDay(-1)">← 前一天</button>
+                <button class="nav-arrow" onclick="navigateDay(-1)">◀ 前一天</button>
                 <span class="date-label" id="dateLabel">--</span>
-                <button class="nav-arrow" id="nextDayBtn" onclick="navigateDay(1)">后一天 →</button>
+                <button class="nav-arrow" id="nextDayBtn" onclick="navigateDay(1)">后一天 ▶</button>
                 <button class="today-btn hidden" id="todayBtn" onclick="goToToday()">📍 今天</button>
             </div>
             <!-- 周日历导航条 -->
@@ -874,7 +892,7 @@
 
             <!-- 睡眠 -->
             <div class="card">
-                <div class="card-title"><span class="icon">😴</span> 睡眠记录</div>
+                <div class="card-title"><span class="icon">🌙</span> 睡眠记录</div>
 
                 <div class="form-row">
                     <label>🛌 上床时间</label>
@@ -885,22 +903,22 @@
                 </div>
 
                 <div class="form-row">
-                    <label class="label-wide">😴 深度睡眠占比</label>
+                    <label class="label-wide">💤 深度睡眠占比</label>
                     <input type="number" id="deepSleepPct" min="0" max="100" step="1" placeholder="%">
                     <span class="unit">%</span>
                 </div>
 
                 <div class="form-row">
-                    <label class="label-wide">👁 夜间清醒次数</label>
+                    <label class="label-wide">👀 夜间清醒次数</label>
                     <input type="number" id="awakeCount" min="0" max="20" step="1" value="0" placeholder="0">
                     <span class="unit">次</span>
                 </div>
 
                 <div class="form-row" style="flex-direction:column;align-items:stretch;">
-                    <label>📝 复盘 / 备注</label>
+                    <label>✍️ 复盘 / 备注</label>
                     <textarea id="sleepNotes" placeholder="比如：今天为什么清醒次数多？喝了咖啡？压力大？睡眠质量如何？……&#10;写下来，周总结的时候会汇总到一起看。"></textarea>
                                 <div class="form-row">
-                    <label class="label-wide">😴 零星睡眠</label>
+                    <label class="label-wide">💤 零星睡眠</label>
                     <input type="number" id="napMinutes" min="0" max="480" step="5" placeholder="0" style="width:70px;">
                     <span class="unit">分钟</span>
                     <span style="font-size:12px;color:#aaa;">（午睡或零星小睡总时长）</span>
@@ -909,9 +927,27 @@
                                 <!-- 零星睡眠（折叠） -->
             </div>
 
+<!-- 喝水记录（上班族专用） -->
+            <div class="card water-section" id="waterCard">
+                <div class="card-title"><span class="icon">🥤</span> 喝水记录</div>
+                <div class="water-cup-select">
+                    <span class="cup-label">杯子大小：</span>
+                    <span class="water-cup-option selected" data-ml="200" onclick="selectCupSize(this, 200)">200ml</span>
+                    <span class="water-cup-option" data-ml="300" onclick="selectCupSize(this, 300)">300ml</span>
+                    <span class="water-cup-option" data-ml="500" onclick="selectCupSize(this, 500)">500ml</span>
+                </div>
+                <div class="water-counter">
+                    <button class="water-btn minus" onclick="changeWater(-1)">−</button>
+                    <span class="water-count" id="waterCount">0</span>
+                    <button class="water-btn plus" onclick="changeWater(1)">+</button>
+                    <span class="water-total">杯 · 总共 <span id="waterTotal">0</span>ml</span>
+                    <button class="water-reset" onclick="resetWater()">归零</button>
+                </div>
+            </div>
+
 <!-- 运动 --><!-- 运动 -->
             <div class="card">
-                <div class="card-title"><span class="icon">🏃</span> 运动记录</div>
+                <div class="card-title"><span class="icon">🔥</span> 运动记录</div>
                 <div style="font-size:13px;color:#999;margin:-8px 0 12px;">可以记录多次运动，每次选种类和时长</div>
 
                 <div id="exerciseSessions">
@@ -923,11 +959,11 @@
 
             <!-- 饮食 -->
             <div class="card">
-                <div class="card-title"><span class="icon">🍽️</span> 饮食记录</div>
+                <div class="card-title"><span class="icon">🍜</span> 饮食记录</div>
 
                 <div class="diet-row">
-                    <span class="meal-label">🌅 早餐</span>
-                    <span class="toggle-btn active" id="breakfastToggle" onclick="toggleMeal('breakfast')">✅ 吃了</span>
+                    <span class="meal-label">🥐 早餐</span>
+                    <span class="toggle-btn active" id="breakfastToggle" onclick="toggleMeal('breakfast')">✓ 吃了</span>
                     <div class="diet-input-wrap">
                         <input type="text" id="breakfastContent" placeholder="吃了什么？">
                         <div class="diet-feeling">
@@ -938,8 +974,8 @@
                 </div>
 
                 <div class="diet-row">
-                    <span class="meal-label">☀️ 午餐</span>
-                    <span class="toggle-btn active" id="lunchToggle" onclick="toggleMeal('lunch')">✅ 吃了</span>
+                    <span class="meal-label">🍱 午餐</span>
+                    <span class="toggle-btn active" id="lunchToggle" onclick="toggleMeal('lunch')">✓ 吃了</span>
                     <div class="diet-input-wrap">
                         <input type="text" id="lunchContent" placeholder="吃了什么？">
                         <div class="diet-feeling">
@@ -950,8 +986,8 @@
                 </div>
 
                 <div class="diet-row">
-                    <span class="meal-label">🌙 晚餐</span>
-                    <span class="toggle-btn active" id="dinnerToggle" onclick="toggleMeal('dinner')">✅ 吃了</span>
+                    <span class="meal-label">🍲 晚餐</span>
+                    <span class="toggle-btn active" id="dinnerToggle" onclick="toggleMeal('dinner')">✓ 吃了</span>
                     <div class="diet-input-wrap">
                         <input type="text" id="dinnerContent" placeholder="吃了什么？">
                         <div class="diet-feeling">
@@ -964,20 +1000,23 @@
 
                           <!-- 吃药记录（养生党专用） -->
               <div class="card med-section" id="medCard">
-                  <div class="card-title"><span class="icon">💊</span> 吃药记录</div>
+                  <div class="card-title"><span class="icon">💉</span> 吃药记录</div>
                   <div style="font-size:13px;color:#999;margin:-8px 0 12px;">每次吃药时记录时间和次数</div>
                   <div id="medRecords">
                       <!-- 由 JS 动态生成 -->
                   </div>
                   <button class="med-add-btn" onclick="addMedRecord()">＋ 添加一次吃药记录</button>
+                  <div class="med-diary" style="margin-top:14px;">
+                      <label style="font-size:13px;color:#777;font-weight:500;display:block;margin-bottom:6px;">✍️ 吃药日记</label>
+                      <textarea id="medDiary" placeholder="记录身体感受、是否按时吃药、吃完有什么反应……&#10;可以每天自由写一写" style="width:100%;min-height:80px;padding:10px 12px;border:1.5px solid #e8e0d8;border-radius:12px;font-size:13px;resize:vertical;outline:none;font-family:inherit;background:#fcfaf8;box-sizing:border-box;"></textarea>
+                  </div>
               </div>
 
             <!-- 保存 --><!-- 保存 -->
             <div class="save-area">
-                <button class="btn-save" id="saveBtn" onclick="saveDaily()">💾 保存今日记录</button>
+                <button class="btn-save" id="saveBtn" onclick="saveDaily()">💿 保存今日记录</button>
                 <div class="save-toast" id="saveToast">✅ 已保存！</div>
             </div>
-            <div id="storageInfo" style="text-align:center;font-size:11px;color:#bbb;padding-bottom:16px;"></div>
         </div>
 
         <!-- ============================================================ -->
@@ -987,7 +1026,7 @@
 
             <div class="card">
                 <div class="summary-header">
-                    <h2>📊 本周总结</h2>
+                    <h2>📈 本周总结</h2>
                     <div class="week-nav">
                         <button onclick="shiftWeek(-1)">‹</button>
                         <span class="week-label" id="weekLabel">--</span>
@@ -998,7 +1037,7 @@
 
             <!-- 睡眠总结 -->
             <div class="card">
-                <div class="card-title"><span class="icon">😴</span> 睡眠周总结</div>
+                <div class="card-title"><span class="icon">💤</span> 睡眠周总结</div>
 
                 <div class="summary-stat" id="sleepStats">
                     <div class="stat-item">
@@ -1033,7 +1072,7 @@
 
             <!-- 运动总结 -->
             <div class="card">
-                <div class="card-title"><span class="icon">🏃</span> 运动周总结</div>
+                <div class="card-title"><span class="icon">🔥</span> 运动周总结</div>
 
                 <div class="summary-stat">
                     <div class="stat-item">
@@ -1062,7 +1101,7 @@
 
             <!-- 饮食总结 -->
             <div class="card">
-                <div class="card-title"><span class="icon">🍽️</span> 饮食周总结</div>
+                <div class="card-title"><span class="icon">🍜</span> 饮食周总结</div>
 
                 <div class="summary-stat">
                     <div class="stat-item">
@@ -1148,162 +1187,61 @@
         let currentViewDate = todayStr();
 
         // ================================================================
-        //  数据读写 (IndexedDB + 内存缓存)
+        //  数据读写
         // ================================================================
-        const DB_NAME = 'healthJournalDB';
-        const STORE_NAME = 'healthStore';
-        let _dataCache = {};
-        let _profileCache = null;
-        let _dbReady = false;
-        let _db = null;
-
-        function idbOpen() {
-            return new Promise((resolve, reject) => {
-                const req = indexedDB.open(DB_NAME, 1);
-                req.onupgradeneeded = (e) => {
-                    const db = e.target.result;
-                    if (!db.objectStoreNames.contains(STORE_NAME)) {
-                        db.createObjectStore(STORE_NAME);
-                    }
-                };
-                req.onsuccess = (e) => { _db = e.target.result; resolve(_db); };
-                req.onerror = (e) => reject(e.target.error);
-            });
-        }
-
-        function idbGet(key) {
-            return new Promise((resolve) => {
-                if (!_db) { resolve(null); return; }
-                try {
-                    const tx = _db.transaction(STORE_NAME, 'readonly');
-                    const store = tx.objectStore(STORE_NAME);
-                    const req = store.get(key);
-                    req.onsuccess = () => resolve(req.result ?? null);
-                    req.onerror = () => resolve(null);
-                } catch(e) { resolve(null); }
-            });
-        }
-
-        function idbSet(key, data) {
-            return new Promise((resolve) => {
-                if (!_db) { resolve(false); return; }
-                try {
-                    const tx = _db.transaction(STORE_NAME, 'readwrite');
-                    const store = tx.objectStore(STORE_NAME);
-                    const req = store.put(data, key);
-                    req.onsuccess = () => resolve(true);
-                    req.onerror = () => resolve(false);
-                } catch(e) { resolve(false); }
-            });
-        }
-
-        async function migrateFromLocalStorage() {
-            const oldData = localStorage.getItem('health_daily_data');
-            const oldProfile = localStorage.getItem('health_daily_profile');
-            let migrated = false;
-            if (oldData) {
-                try {
-                    const data = JSON.parse(oldData);
-                    const existing = await idbGet('data');
-                    if (!existing || Object.keys(existing).length === 0) {
-                        await idbSet('data', data);
-                        _dataCache = data;
-                        localStorage.removeItem('health_daily_data');
-                        migrated = true;
-                    }
-                } catch(e) {}
+        // ---- 存储抽象层 ----
+        // 现在使用 localStorage，未来可替换为后端 API
+        const storage = {
+            _prefix: 'health_daily_',
+            get(key) {
+                try { return JSON.parse(localStorage.getItem(this._prefix + key) || 'null'); } catch { return null; }
+            },
+            set(key, data) {
+                localStorage.setItem(this._prefix + key, JSON.stringify(data));
             }
-            if (oldProfile) {
-                try {
-                    const profile = JSON.parse(oldProfile);
-                    const existing = await idbGet('profile');
-                    if (!existing) {
-                        await idbSet('profile', profile);
-                        _profileCache = profile;
-                        localStorage.removeItem('health_daily_profile');
-                    }
-                } catch(e) {}
-            }
-            return migrated;
+        };
+
+        function getData() {
+            return storage.get('data') || {};
         }
 
-        async function initStorage() {
-            try {
-                await idbOpen();
-                const migrated = await migrateFromLocalStorage();
-                if (_dataCache === undefined || Object.keys(_dataCache).length === 0) {
-                    const stored = await idbGet('data');
-                    if (stored && typeof stored === 'object' && !Array.isArray(stored)) _dataCache = stored;
-                }
-                if (_profileCache === null) {
-                    const p = await idbGet('profile');
-                    if (p) _profileCache = p;
-                }
-                _dbReady = true;
-                if (migrated) {
-                    setTimeout(() => {
-                        const toast = document.getElementById('saveToast');
-                        if (toast) { toast.textContent = '✅ 数据已迁移到新存储，更稳定更安全！'; toast.classList.add('show');
-                        setTimeout(() => { toast.textContent = '✅ 已保存！'; toast.classList.remove('show'); }, 3000); }
-                    }, 800);
-                }
-            } catch(e) {
-                console.warn('IndexedDB 不可用，回退到 localStorage');
-                const oldData = localStorage.getItem('health_daily_data');
-                if (oldData) { try { _dataCache = JSON.parse(oldData); } catch(e2) {} }
-                const oldProfile = localStorage.getItem('health_daily_profile');
-                if (oldProfile) { try { _profileCache = JSON.parse(oldProfile); } catch(e2) {} }
-                _dbReady = false;
-            }
-            renderStorageInfo();
+        function setData(data) {
+            storage.set('data', data);
         }
 
-        function getData() { return _dataCache; }
-
-        async function setData(data) {
-            _dataCache = data;
-            if (_dbReady) {
-                const ok = await idbSet('data', data);
-                if (!ok) {
-                    try { localStorage.setItem('health_daily_backup', JSON.stringify(data)); } catch(e) {}
-                }
-            } else {
-                try { localStorage.setItem('health_daily_data', JSON.stringify(data)); } catch(e) {}
-            }
-            renderStorageInfo();
+        function getDayData(dateStr) {
+            const data = getData();
+            return data[dateStr] || null;
         }
 
-        function getDayData(dateStr) { return _dataCache[dateStr] || null; }
-
-        async function saveDayData(dateStr, record) {
-            _dataCache[dateStr] = record;
-            await setData(_dataCache);
-        }
-
-        function renderStorageInfo() {
-            const el = document.getElementById('storageInfo');
-            if (!el) return;
-            const count = Object.keys(_dataCache).length;
-            const raw = JSON.stringify(_dataCache);
-            const kb = (new Blob([raw]).size / 1024).toFixed(1);
-            const pct = _dbReady ? '' : ' (备)';
-            el.textContent = '📦 已记录 ' + count + ' 天 · ' + kb + ' KB' + pct;
+        function saveDayData(dateStr, record) {
+            const data = getData();
+            data[dateStr] = record;
+            setData(data);
         }
 
         // ---- 用户配置 ----
-        function getProfile() { return _profileCache; }
-
-        async function setProfile(profile) {
-            _profileCache = profile;
-            if (_dbReady) await idbSet('profile', profile);
-            else try { localStorage.setItem('health_daily_profile', JSON.stringify(profile)); } catch(e) {}
+        function getProfile() {
+            return storage.get('profile') || null;
         }
 
-        function hasProfile() { return _profileCache !== null; }
+        function setProfile(profile) {
+            storage.set('profile', profile);
+        }
 
-        function isWellness() { return _profileCache && _profileCache.identity === 'wellness'; }
+        function hasProfile() {
+            return getProfile() !== null;
+        }
 
-        function shouldTrackMedication() { return _profileCache && _profileCache.identity === 'wellness' && _profileCache.trackMedication === true; }
+        function isWellness() {
+            const p = getProfile();
+            return p && p.identity === 'wellness';
+        }
+
+        function shouldTrackMedication() {
+            const p = getProfile();
+            return p && p.identity === 'wellness' && p.trackMedication === true;
+        }
 
         // ================================================================
         //  睡眠时长计算
@@ -1334,14 +1272,14 @@
             const feeling = document.getElementById(meal + 'Feeling');
             const isAte = toggle.textContent.includes('✅');
             if (isAte) {
-                toggle.textContent = '❌ 没吃';
+                toggle.textContent = '✗ 没吃';
                 toggle.classList.remove('active');
                 content.disabled = true;
                 content.value = '';
                 feeling.disabled = true;
                 feeling.value = '';
             } else {
-                toggle.textContent = '✅ 吃了';
+                toggle.textContent = '✓ 吃了';
                 toggle.classList.add('active');
                 content.disabled = false;
                 feeling.disabled = false;
@@ -1461,7 +1399,7 @@
             }
 
             // 更新保存按钮文案
-            document.getElementById('saveBtn').textContent = isToday ? '💾 保存今日记录' : '💾 保存该日记录';
+            document.getElementById('saveBtn').textContent = isToday ? '💿 保存今日记录' : '💿 保存该日记录';
 
             // 渲染周日历条
             renderWeekStrip(dateStr);
@@ -1482,7 +1420,7 @@
                 const toggle = document.getElementById(m + 'Toggle');
                 const content = document.getElementById(m + 'Content');
                 const feeling = document.getElementById(m + 'Feeling');
-                toggle.textContent = '✅ 吃了';
+                toggle.textContent = '✓ 吃了';
                 toggle.classList.add('active');
                 content.disabled = false;
                 content.value = '';
@@ -1498,12 +1436,6 @@
                     document.getElementById('deepSleepPct').value = dayData.sleep.deepSleepPct ?? '';
                     document.getElementById('awakeCount').value = dayData.sleep.awakeCount ?? '0';
                     document.getElementById('sleepNotes').value = dayData.sleep.notes || '';
-                    // 加载零星睡眠数据
-                    if (dayData.sleep.naps && dayData.sleep.naps.length > 0) {
-                        document.getElementById('napMinutes').value = dayData.sleep.naps[0].durationMin || '';
-                    } else {
-                        document.getElementById('napMinutes').value = '';
-                    }
                     calcSleepDuration();
                 }
                 // ---- 运动 ----
@@ -1521,14 +1453,14 @@
                         const content = document.getElementById(m + 'Content');
                         const feeling = document.getElementById(m + 'Feeling');
                         if (info && info.ate) {
-                            toggle.textContent = '✅ 吃了';
+                            toggle.textContent = '✓ 吃了';
                             toggle.classList.add('active');
                             content.disabled = false;
                             content.value = info.content || '';
                             feeling.disabled = false;
                             feeling.value = info.feeling || '';
                         } else {
-                            toggle.textContent = '❌ 没吃';
+                            toggle.textContent = '✗ 没吃';
                             toggle.classList.remove('active');
                             content.disabled = true;
                             content.value = '';
@@ -1537,6 +1469,16 @@
                         }
                     });
                 }
+                // ---- 吃药 ----
+                if (dayData.medication) {
+                    renderMedRecords(dayData.medication.records || []);
+                    const medDiary = document.getElementById('medDiary');
+                    if (medDiary) medDiary.value = dayData.medication.diary || '';
+                } else { renderMedRecords([]); const md = document.getElementById('medDiary'); if (md) md.value = ''; }
+                // ---- 喝水 ----
+                if (dayData.water) {
+                    setWaterUI(dayData.water.cups, dayData.water.cupMl);
+                } else { resetWater(); }
             }
         }
 
@@ -1600,83 +1542,64 @@
         // ================================================================
         //  保存当前选定日期的记录
         // ================================================================
-        async function saveDaily() {
-            try {
-                const btn = document.getElementById('saveBtn');
-                btn.disabled = true;
-                btn.textContent = '⏳ 保存中...';
+        function saveDaily() {
+            const dateStr = currentViewDate;
 
-                const dateStr = currentViewDate;
+            // ---- 睡眠 ----
+            const bedtime = document.getElementById('sleepBedtime').value;
+            const wakeTime = document.getElementById('sleepWakeTime').value;
+            const deepSleepPct = document.getElementById('deepSleepPct').value;
+            const awakeCount = document.getElementById('awakeCount').value;
+            const sleepNotes = document.getElementById('sleepNotes').value.trim();
 
-                // ---- 睡眠 ----
-                const bedtime = document.getElementById('sleepBedtime').value;
-                const wakeTime = document.getElementById('sleepWakeTime').value;
-                const deepSleepPct = document.getElementById('deepSleepPct').value;
-                const awakeCount = document.getElementById('awakeCount').value;
-                const sleepNotes = document.getElementById('sleepNotes').value.trim();
-
-                let durationMin = null;
-                if (bedtime && wakeTime) {
-                    const [bh, bm] = bedtime.split(':').map(Number);
-                    const [wh, wm] = wakeTime.split(':').map(Number);
-                    let dm = (wh * 60 + wm) - (bh * 60 + bm);
-                    if (dm < 0) dm += 24 * 60;
-                    durationMin = dm;
-                }
-
-                const sleep = {
-                    bedtime: bedtime || '',
-                    wakeTime: wakeTime || '',
-                    durationMin: durationMin,
-                    deepSleepPct: deepSleepPct !== '' ? +deepSleepPct : null,
-                    awakeCount: awakeCount !== '' ? +awakeCount : 0,
-                    notes: sleepNotes,
-                    naps: collectNaps()
-                };
-
-                // ---- 运动 ----
-                const sessions = collectExerciseSessions().filter(s => s.duration != null && s.duration > 0);
-                const exercise = { sessions };
-
-                // ---- 饮食 ----
-                const diet = {};
-                MEALS.forEach(m => {
-                    const toggle = document.getElementById(m + 'Toggle');
-                    const content = document.getElementById(m + 'Content');
-                    const feeling = document.getElementById(m + 'Feeling');
-                    const ate = toggle.textContent.includes('✅');
-                    diet[m] = {
-                        ate: ate,
-                        content: ate ? content.value.trim() : '',
-                        feeling: ate ? feeling.value.trim() : ''
-                    };
-                });
-
-                const medication = { records: collectMedRecords() };
-                const record = { sleep, exercise, diet, medication };
-                await saveDayData(dateStr, record);
-
-                const toast = document.getElementById('saveToast');
-                toast.textContent = '✅ 已保存！';
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 2000);
-                renderWeekStrip(currentViewDate);
-                renderStorageInfo();
-            } catch(e) {
-                const toast = document.getElementById('saveToast');
-                toast.textContent = '❌ 保存失败！';
-                toast.style.color = '#e87171';
-                toast.classList.add('show');
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                    toast.style.color = '#4a7c59';
-                    toast.textContent = '✅ 已保存！';
-                }, 4000);
-            } finally {
-                const btn = document.getElementById('saveBtn');
-                btn.disabled = false;
-                btn.textContent = '💾 保存今日记录';
+            let durationMin = null;
+            if (bedtime && wakeTime) {
+                const [bh, bm] = bedtime.split(':').map(Number);
+                const [wh, wm] = wakeTime.split(':').map(Number);
+                let dm = (wh * 60 + wm) - (bh * 60 + bm);
+                if (dm < 0) dm += 24 * 60;
+                durationMin = dm;
             }
+
+            const sleep = {
+                bedtime: bedtime || '',
+                wakeTime: wakeTime || '',
+                durationMin: durationMin,
+                deepSleepPct: deepSleepPct !== '' ? +deepSleepPct : null,
+                awakeCount: awakeCount !== '' ? +awakeCount : 0,
+                notes: sleepNotes
+            ,
+                naps: collectNaps()
+            };
+
+            // ---- 运动 ----
+            const sessions = collectExerciseSessions().filter(s => s.duration != null && s.duration > 0);
+            const exercise = { sessions };
+
+            // ---- 饮食 ----
+            const diet = {};
+            MEALS.forEach(m => {
+                const toggle = document.getElementById(m + 'Toggle');
+                const content = document.getElementById(m + 'Content');
+                const feeling = document.getElementById(m + 'Feeling');
+                const ate = toggle.textContent.includes('✅');
+                diet[m] = {
+                    ate: ate,
+                    content: ate ? content.value.trim() : '',
+                    feeling: ate ? feeling.value.trim() : ''
+                };
+            });
+
+            const medication = { records: collectMedRecords(), diary: document.getElementById('medDiary')?.value?.trim() || '' };
+            const water = { cups: parseInt(document.getElementById('waterCount')?.textContent)||0, cupMl: cupSize };
+            const record = { sleep, exercise, diet, medication, water };
+            saveDayData(dateStr, record);
+
+            const toast = document.getElementById('saveToast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+            // 刷新周日历条以显示新保存的数据标记
+            renderWeekStrip(currentViewDate);
         }
 
         // ================================================================
@@ -1977,32 +1900,63 @@
         // ================================================================
         function exportData() {
             const data = getData();
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = '健康小记_备份_' + todayStr() + '.json';
-            a.click();
-            URL.revokeObjectURL(url);
+            const jsonStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            
+            if (navigator.userAgent.includes('Windows') || navigator.userAgent.includes('Mac')) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = '健康小记_备份_' + todayStr() + '.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                alert('✅ 导出成功！文件已下载到电脑。');
+            } else {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(jsonStr).then(() => {
+                        alert('✅ 数据已复制到剪贴板！\n\n请粘贴到备忘录或发给自己的微信保存。');
+                    }).catch(() => {
+                        showExportModal(jsonStr);
+                    });
+                } else {
+                    showExportModal(jsonStr);
+                }
+            }
+        }
+        
+        function showExportModal(jsonStr) {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;inset:0;z-index:20000;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:20px;';
+            overlay.innerHTML = '<div style="background:#fff;border-radius:16px;padding:24px;max-width:90vw;max-height:80vh;overflow:auto;width:100%;">' +
+                '<h3 style="margin:0 0 12px;">✅ 导出数据</h3>' +
+                '<p style="font-size:13px;color:#888;margin-bottom:12px;">长按下方文字全选复制，然后粘贴保存</p>' +
+                '<textarea readonly style="width:100%;height:200px;font-size:12px;border:1px solid #e0ddd5;border-radius:8px;padding:10px;resize:none;box-sizing:border-box;">' + jsonStr + '</textarea>' +
+                '<button onclick="this.closest('div[style]').parentElement.remove()" style="margin-top:12px;padding:10px 24px;border:none;background:#4a7c59;color:#fff;border-radius:20px;font-size:14px;cursor:pointer;width:100%;">关闭</button>' +
+                '</div>';
+            document.body.appendChild(overlay);
+            overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
         }
 
-        async function importData(event) {
+        function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = async function(e) {
+            reader.onload = function(e) {
                 try {
                     const imported = JSON.parse(e.target.result);
+                    if (typeof imported !== 'object' || imported === null) throw new Error('无效数据');
                     const current = getData();
+                    let count = 0;
                     for (const key of Object.keys(imported)) {
                         current[key] = imported[key];
+                        count++;
                     }
-                    await setData(current);
-                    alert('✅ 导入成功！共导入 ' + Object.keys(imported).length + ' 条记录。');
+                    setData(current);
+                    alert('✅ 导入成功！共导入 ' + count + ' 天的记录。');
                     if (currentTab === 'daily') loadDate(currentViewDate);
                     else renderWeekly();
                 } catch (err) {
-                    alert('❌ 文件格式不对，请选择正确的备份文件。');
+                    alert('❌ 文件格式不正确，请选择 .json 备份文件。\n\n如果是从微信或备忘录复制的文字，请先粘贴到记事本，保存为 .json 文件后再导入。');
                 }
             };
             reader.readAsText(file);
@@ -2012,10 +1966,9 @@
         // ================================================================
         //  初始化
         // ================================================================
-        document.addEventListener('DOMContentLoaded', async function() {
-            await initStorage();
+        document.addEventListener('DOMContentLoaded', function() {
             if (!hasProfile()) showOnboarding();
-            else updateProfileUI();
+            else { updateProfileUI(); updateSectionVisibility(); }
             loadDate(todayStr());
             document.addEventListener('keydown', function(e) {
                 if ((e.ctrlKey || e.metaKey) && e.key === 's') {
@@ -2045,6 +1998,36 @@
                 return [{ durationMin: +val }];
             }
             return [];
+        }
+
+// ================================================================
+        //  喝水记录
+        // ================================================================
+        let cupSize=200;
+        function selectCupSize(el,ml){
+            document.querySelectorAll('.water-cup-option').forEach(o=>o.classList.remove('selected'));
+            el.classList.add('selected');
+            cupSize=ml;
+        }
+        function changeWater(delta){
+            const cnt=document.getElementById('waterCount');
+            let v=parseInt(cnt.textContent)||0;
+            v=Math.max(0,v+delta);
+            cnt.textContent=v;
+            document.getElementById('waterTotal').textContent=v*cupSize;
+        }
+        function resetWater(){
+            document.getElementById('waterCount').textContent='0';
+            document.getElementById('waterTotal').textContent='0';
+        }
+        function setWaterUI(cups,ml){
+            document.getElementById('waterCount').textContent=cups||0;
+            document.getElementById('waterTotal').textContent=(cups||0)*(ml||200);
+            if(ml)cupSize=ml;
+            document.querySelectorAll('.water-cup-option').forEach(o=>{
+                if(parseInt(o.dataset.ml)===cupSize)o.classList.add('selected');
+                else o.classList.remove('selected');
+            });
         }
 
 // ================================================================
@@ -2079,12 +2062,12 @@
         // ================================================================
         //  身份选择 / 设置
         // ================================================================
-        const IDENTITY_LABELS={office:'💼 上班族',wellness:'🌿 养生党'};
+        const IDENTITY_LABELS={office:'💻 上班族',wellness:'🧘 养生党'};
         function showOnboarding(){document.getElementById('onboardingOverlay').classList.remove('hidden');}
         function selectIdentity(id){if(id==='wellness')document.getElementById('medDialog').classList.remove('hidden');else setProfileAndFinish(id,false);}
-        async function setProfileAndFinish(identity,trackMed){
+        function setProfileAndFinish(identity,trackMed){
             document.getElementById('medDialog').classList.add('hidden');
-            await setProfile({identity:identity,trackMedication:trackMed});
+            setProfile({identity:identity,trackMedication:trackMed});
             document.getElementById('onboardingOverlay').classList.add('hidden');
             updateProfileUI();
             updateSectionVisibility();
@@ -2098,14 +2081,17 @@
         function showSettings(){
             const p=getProfile();if(!p)return;
             document.getElementById('settingsIdentity').textContent=IDENTITY_LABELS[p.identity]||p.identity;
-            document.getElementById('settingsMed').textContent=p.identity==='wellness'?(p.trackMedication?'✅ 记录':'❌ 不记录'):'—';
+            document.getElementById('settingsMed').textContent=p.identity==='wellness'?(p.trackMedication?'✓ 记录':'✗ 不记录'):'—';
             document.getElementById('settingsModal').classList.remove('hidden');
         }
         function hideSettings(){document.getElementById('settingsModal').classList.add('hidden');}
-        async function resetProfile(){hideSettings();await setProfile(null);showOnboarding();}
+        function resetProfile(){hideSettings();setProfile(null);showOnboarding();}
         function updateSectionVisibility(){
             const mc=document.getElementById('medCard');
+            const wc=document.getElementById('waterCard');
+            const p=getProfile();
             if(shouldTrackMedication())mc.classList.add('visible');else mc.classList.remove('visible');
+            if(p&&p.identity==='office')wc.classList.add('visible');else wc.classList.remove('visible');
         }
         document.addEventListener('click',function(e){
             if(e.target===document.getElementById('settingsModal'))hideSettings();
@@ -2116,7 +2102,7 @@
 
     <!-- ========== 身份选择引导页 ========== -->
     <div class="onboarding-overlay hidden" id="onboardingOverlay">
-        <div class="onboarding-title">🌿 欢迎使用健康小记</div>
+        <div class="onboarding-title">⚡ 欢迎使用健康小记</div>
         <div class="onboarding-sub">先告诉我你的身份，我会帮你定制记录内容</div>
         <div class="onboarding-cards">
             <div class="onboarding-card" onclick="selectIdentity('office')">
@@ -2135,7 +2121,7 @@
     <!-- ========== 吃药询问弹窗 ========== -->
     <div class="onboarding-dialog hidden" id="medDialog">
         <div class="dialog-card">
-            <span class="icon">💊</span>
+            <span class="icon">💉</span>
             <h3>需要记录吃药吗？</h3>
             <p>如果你有固定服药需求，可以帮你记录<br>每天的吃药时间和次数</p>
             <div class="dialog-actions">
@@ -2148,7 +2134,7 @@
     <!-- ========== 设置弹窗 ========== -->
     <div class="modal-overlay hidden" id="settingsModal">
         <div class="modal-card">
-            <h3>⚙️ 设置 <button class="modal-close" onclick="hideSettings()">✕</button></h3>
+            <h3>🔮 设置 <button class="modal-close" onclick="hideSettings()">✕</button></h3>
             <div class="modal-row">
                 <span class="mlabel">当前身份</span>
                 <span class="mval" id="settingsIdentity">--</span>
