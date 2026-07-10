@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="var(--accent)">
+    <meta name="theme-color" content="#4a7c59">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="manifest" href="manifest.json">
@@ -20,15 +20,15 @@
             box-sizing: border-box;
         }
         body {
-            font-family: var(--font-body);
-            background: #efe9de;
-            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f0eb;
+            color: #3d3d3d;
             min-height: 100vh;
             padding: 20px;
             padding-bottom: 80px;
         }
         /* ===== 顶部 ===== */
-        .header { background: rgba(255,255,255,0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        .header {
             max-width: 720px;
             margin: 0 auto 16px;
             display: flex;
@@ -38,36 +38,39 @@
         .header h1 {
             font-size: 26px;
             font-weight: 700;
-            color: var(--text);
+            color: #4a4a4a;
             letter-spacing: 2px;
         }
         .header .sub {
             font-size: 13px;
-            color: var(--text2);
+            color: #999;
         }
         /* ===== Tab 导航 ===== */
         .tabs {
             max-width: 720px;
             margin: 0 auto 16px;
             display: flex;
-            background: var(--surface);
+            background: #fff;
             border-radius: 14px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
             overflow: hidden;
         }
-        .tabs button { background: rgba(255,255,255,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-family: var(--font-body);
+        .tabs button {
             flex: 1;
             padding: 14px 0;
             border: none;
             background: transparent;
             font-size: 16px;
             font-weight: 500;
-            color: var(--text2);
+            color: #999;
             cursor: pointer;
             transition: all 0.25s;
             position: relative;
         }
-        .tabs button.active { border-color: #4a7c59; background: #4a7c59; color: #fff; box-shadow: var(--glow); }
+        .tabs button.active {
+            color: #4a7c59;
+            background: #f8fbf6;
+        }
         .tabs button.active::after {
             content: '';
             position: absolute;
@@ -75,7 +78,7 @@
             left: 20%;
             width: 60%;
             height: 3px;
-            background: rgba(63,185,80,0.85);
+            background: #4a7c59;
             border-radius: 3px 3px 0 0;
         }
         .tabs button:hover {
@@ -95,14 +98,14 @@
         }
 
         /* ===== 卡片通用 ===== */
-        .card { background: rgba(255,255,255,0.65); backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%);
-            background: var(--surface);  -webkit-
+        .card {
+            background: #fff;
             border-radius: 16px;
             padding: 20px 22px;
             margin-bottom: 14px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
         }
-        .card-title { font-family: var(--font-title);
+        .card-title {
             font-size: 17px;
             font-weight: 600;
             margin-bottom: 14px;
@@ -136,11 +139,11 @@
         .form-row input[type="text"],
         .form-row select {
             padding: 8px 12px;
-            border: 1px solid var(--border);
+            border: 1.5px solid #e8e0d8;
             border-radius: 10px;
             font-size: 14px;
-            background: var(--surface2);
-            color: var(--text);
+            background: #fcfaf8;
+            color: #3d3d3d;
             outline: none;
             transition: border 0.2s;
             min-width: 100px;
@@ -149,8 +152,8 @@
         .form-row input[type="number"]:focus,
         .form-row input[type="text"]:focus,
         .form-row select:focus {
-            border-color: var(--accent);
-            background: var(--surface);
+            border-color: #4a7c59;
+            background: #fff;
         }
         .form-row input[type="number"] {
             width: 80px;
@@ -166,15 +169,15 @@
         }
         .form-row .unit {
             font-size: 13px;
-            color: var(--text2);
+            color: #aaa;
         }
 
         /* 小提示 */
         .calc-hint {
             font-size: 14px;
-            color: var(--accent);
+            color: #4a7c59;
             font-weight: 500;
-            background: rgba(63,185,80,0.1);
+            background: #f0f7ee;
             padding: 4px 14px;
             border-radius: 20px;
         }
@@ -187,45 +190,45 @@
             margin-bottom: 10px;
             flex-wrap: wrap;
             padding: 8px 12px;
-            background: var(--surface2);
+            background: #fcfaf8;
             border-radius: 12px;
-            border: 1px solid var(--border);
+            border: 1px solid #f0ebe5;
         }
         .ex-session .session-label {
             font-size: 13px;
             font-weight: 500;
-            color: var(--text2);
+            color: #888;
             min-width: 44px;
         }
         .ex-session select {
             padding: 6px 10px;
-            border: 1px solid var(--border);
+            border: 1.5px solid #e8e0d8;
             border-radius: 10px;
             font-size: 13px;
-            background: var(--surface);
+            background: #fff;
             outline: none;
             cursor: pointer;
             min-width: 76px;
         }
         .ex-session select:focus {
-            border-color: var(--accent);
+            border-color: #4a7c59;
         }
         .ex-session input[type="number"] {
             width: 64px;
             padding: 6px 10px;
-            border: 1px solid var(--border);
+            border: 1.5px solid #e8e0d8;
             border-radius: 10px;
             font-size: 13px;
-            background: var(--surface);
+            background: #fff;
             outline: none;
         }
         .ex-session input[type="number"]:focus {
-            border-color: var(--accent);
+            border-color: #4a7c59;
         }
         .ex-session .close-btn {
             border: none;
             background: transparent;
-            color: var(--border);
+            color: #ccc;
             font-size: 18px;
             cursor: pointer;
             padding: 0 4px;
@@ -237,19 +240,19 @@
         }
         .ex-add-btn {
             padding: 6px 18px;
-            border: 1.5px dashed var(--border);
+            border: 1.5px dashed #c8c0b6;
             border-radius: 20px;
             font-size: 13px;
-            color: var(--text2);
+            color: #999;
             background: transparent;
             cursor: pointer;
             transition: all 0.2s;
             margin-top: 4px;
         }
         .ex-add-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: rgba(63,185,80,0.08);
+            border-color: #4a7c59;
+            color: #4a7c59;
+            background: #f8fbf6;
         }
         .ex-add-btn:disabled {
             opacity: 0.4;
@@ -268,16 +271,16 @@
             min-width: 48px;
             font-size: 14px;
             font-weight: 500;
-            color: var(--text);
+            color: #555;
             line-height: 34px;
         }
         .toggle-btn {
             padding: 4px 12px;
-            border: 1px solid var(--border);
+            border: 1.5px solid #e8e0d8;
             border-radius: 16px;
             font-size: 13px;
             cursor: pointer;
-            background: var(--surface2);
+            background: #fcfaf8;
             transition: all 0.2s;
             user-select: none;
             line-height: 22px;
@@ -285,8 +288,8 @@
         }
         .toggle-btn.active {
             background: #e8f3e4;
-            border-color: var(--accent);
-            color: var(--accent);
+            border-color: #4a7c59;
+            color: #4a7c59;
         }
         .diet-input-wrap {
             display: flex;
@@ -297,20 +300,20 @@
         }
         .diet-input-wrap input[type="text"] {
             padding: 7px 12px;
-            border: 1px solid var(--border);
+            border: 1.5px solid #e8e0d8;
             border-radius: 10px;
             font-size: 14px;
-            background: var(--surface2);
+            background: #fcfaf8;
             outline: none;
             transition: border 0.2s;
             width: 100%;
         }
         .diet-input-wrap input[type="text"]:focus {
-            border-color: var(--accent);
+            border-color: #4a7c59;
         }
         .diet-input-wrap input[type="text"]:disabled {
-            background: #efe9de;
-            color: var(--text2);
+            background: #f5f0eb;
+            color: #bbb;
         }
         .diet-feeling {
             display: flex;
@@ -319,7 +322,7 @@
         }
         .diet-feeling label {
             font-size: 12px;
-            color: var(--text2);
+            color: #aaa;
             white-space: nowrap;
         }
         .diet-feeling input[type="text"] {
@@ -328,37 +331,37 @@
             border: 1.5px solid #ede8e2;
             border-radius: 8px;
             font-size: 13px;
-            background: var(--surface2);
+            background: #fcfaf8;
             outline: none;
             transition: border 0.2s;
             min-width: 80px;
         }
         .diet-feeling input[type="text"]:focus {
-            border-color: var(--accent);
+            border-color: #4a7c59;
         }
         .diet-feeling input[type="text"]:disabled {
-            background: #efe9de;
-            color: var(--text2);
+            background: #f5f0eb;
+            color: #bbb;
         }
 
         /* ===== 文本域 ===== */
         textarea {
             width: 100%;
             padding: 10px 14px;
-            border: 1px solid var(--border);
+            border: 1.5px solid #e8e0d8;
             border-radius: 12px;
             font-size: 14px;
             font-family: inherit;
-            background: var(--surface2);
+            background: #fcfaf8;
             outline: none;
             resize: vertical;
             min-height: 120px;
             transition: border 0.2s;
-            color: var(--text);
+            color: #3d3d3d;
         }
         textarea:focus {
-            border-color: var(--accent);
-            background: var(--surface);
+            border-color: #4a7c59;
+            background: #fff;
         }
 
         /* ===== 保存按钮 ===== */
@@ -368,7 +371,7 @@
         }
         .btn-save {
             padding: 12px 48px;
-            background: rgba(63,185,80,0.85);
+            background: #4a7c59;
             color: #fff;
             border: none;
             border-radius: 30px;
@@ -379,7 +382,7 @@
             box-shadow: 0 4px 14px rgba(74, 124, 89, 0.3);
         }
         .btn-save:hover {
-            background: var(--accent);
+            background: #3d6b4b;
         }
         .btn-save:active {
             transform: scale(0.97);
@@ -387,7 +390,7 @@
         .save-toast {
             margin-top: 8px;
             font-size: 14px;
-            color: var(--accent);
+            color: #4a7c59;
             opacity: 0;
             transition: opacity 0.3s;
         }
@@ -395,25 +398,20 @@
             opacity: 1;
         }
         .btn-export {
-            font-family: var(--font-body);
-            background: var(--surface);
-            color: var(--text2);
-            border: 1px solid var(--border);
             margin-left: 12px;
             padding: 10px 24px;
             background: transparent;
-            color: var(--accent);
-            border: 1.5px solid var(--accent);
+            color: #4a7c59;
+            border: 1.5px solid #4a7c59;
             border-radius: 30px;
             font-size: 14px;
             cursor: pointer;
             transition: all 0.2s;
         }
         .btn-export:hover {
-            background: rgba(63,185,80,0.1);
+            background: #f0f7ee;
         }
         .btn-import-wrap {
-            font-family: var(--font-body);
             display: inline-block;
             position: relative;
             margin-left: 8px;
@@ -428,21 +426,17 @@
             cursor: pointer;
         }
         .btn-import {
-            font-family: var(--font-body);
-            background: var(--surface);
-            color: var(--text2);
-            border: 1px solid var(--border);
             padding: 10px 24px;
             background: transparent;
-            color: var(--accent);
-            border: 1.5px solid var(--accent);
+            color: #4a7c59;
+            border: 1.5px solid #4a7c59;
             border-radius: 30px;
             font-size: 14px;
             cursor: pointer;
             transition: all 0.2s;
         }
         .btn-import:hover {
-            background: rgba(63,185,80,0.1);
+            background: #f0f7ee;
         }
 
         /* ===== 周总结 ===== */
@@ -456,7 +450,7 @@
         }
         .summary-header h2 {
             font-size: 18px;
-            color: var(--text);
+            color: #4a4a4a;
         }
         .week-nav {
             display: flex;
@@ -465,7 +459,7 @@
         }
         .week-nav button {
             border: none;
-            background: var(--surface);
+            background: #fff;
             width: 34px;
             height: 34px;
             border-radius: 50%;
@@ -473,22 +467,19 @@
             cursor: pointer;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
             transition: background 0.2s;
-            color: var(--text);
+            color: #555;
         }
         .week-nav button:hover {
-            background: rgba(63,185,80,0.1);
+            background: #f0f7ee;
         }
         .week-nav .week-label {
             font-size: 14px;
-            color: var(--text2);
+            color: #888;
             min-width: 120px;
             text-align: center;
         }
 
         .chart-wrap {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
             margin: 12px 0 16px;
             padding: 6px;
             position: relative;
@@ -505,10 +496,10 @@
             border-radius: 12px;
             font-size: 14px;
             line-height: 1.7;
-            color: var(--text);
+            color: #555;
         }
         .summary-notes strong {
-            color: var(--text);
+            color: #4a4a4a;
         }
         .summary-stat {
             display: flex;
@@ -524,23 +515,21 @@
             padding: 10px 14px;
             text-align: center;
         }
-        .stat-item .num { font-family: var(--font-mono);
-            font-family: var(--font-mono);
-            color: var(--accent);
+        .stat-item .num {
             font-size: 22px;
             font-weight: 700;
-            color: var(--accent);
+            color: #4a7c59;
         }
         .stat-item .label {
             font-size: 12px;
-            color: var(--text2);
+            color: #888;
             margin-top: 2px;
         }
 
         .no-data-msg {
             text-align: center;
             padding: 40px 20px;
-            color: var(--text2);
+            color: #bbb;
             font-size: 15px;
         }
 
@@ -548,7 +537,7 @@
         .empty-state {
             text-align: center;
             padding: 50px 20px;
-            color: var(--text2);
+            color: #bbb;
         }
         .empty-state .big-icon {
             font-size: 48px;
@@ -564,7 +553,7 @@
                 padding: 12px;
                 padding-bottom: 60px;
             }
-            .card { background: rgba(255,255,255,0.65); backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%);
+            .card {
                 padding: 16px;
             }
             .header h1 {
@@ -580,7 +569,7 @@
             .stat-item {
                 min-width: 80px;
             }
-            .stat-item .num { font-family: var(--font-mono);
+            .stat-item .num {
                 font-size: 18px;
             }
             .btn-export,
@@ -604,21 +593,21 @@
             background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: var(--border);
+            background: #d0c8be;
             border-radius: 3px;
         }
 
         /* 日期显示 */
         .date-display {
             font-size: 15px;
-            color: var(--text2);
+            color: #888;
             margin-bottom: 4px;
         }
 
         /* feel-input inline helper */
         .feel-label-sm {
             font-size: 12px;
-            color: var(--text2);
+            color: #aaa;
             white-space: nowrap;
         }
 
@@ -630,40 +619,37 @@
             align-items: center;
             gap: 6px;
         }
-        .date-nav .nav-arrow { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            background: var(--surface);
-            color: var(--accent);
-            border: 1px solid var(--border);
+        .date-nav .nav-arrow {
             padding: 8px 14px;
             border: none;
-            background: var(--surface);
+            background: #fff;
             border-radius: 22px;
             font-size: 14px;
-            color: var(--accent);
+            color: #4a7c59;
             cursor: pointer;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 1px 6px rgba(0,0,0,0.08);
             transition: all 0.2s;
             white-space: nowrap;
             flex-shrink: 0;
         }
-        .date-nav .nav-arrow:hover { background: rgba(63,185,80,0.1); }
+        .date-nav .nav-arrow:hover { background: #f0f7ee; }
         .date-nav .nav-arrow:disabled {
             opacity: 0.35;
             cursor: not-allowed;
-            color: var(--text2);
+            color: #bbb;
         }
         .date-nav .date-label {
             flex: 1;
             text-align: center;
             font-size: 16px;
             font-weight: 600;
-            color: var(--text);
+            color: #4a4a4a;
             white-space: nowrap;
         }
         .date-nav .today-btn {
             padding: 8px 14px;
             border: none;
-            background: rgba(63,185,80,0.85);
+            background: #4a7c59;
             border-radius: 22px;
             font-size: 13px;
             color: #fff;
@@ -672,7 +658,7 @@
             white-space: nowrap;
             flex-shrink: 0;
         }
-        .date-nav .today-btn:hover { background: var(--accent); }
+        .date-nav .today-btn:hover { background: #3d6b4b; }
         .date-nav .today-btn.hidden { display: none; }
 
         /* ===== 周日历导航条 ===== */
@@ -689,25 +675,25 @@
             align-items: center;
             gap: 3px;
             padding: 8px 2px 10px;
-            background: var(--surface);
+            background: #fff;
             border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
             transition: all 0.2s;
             border: 2px solid transparent;
             user-select: none;
             min-width: 0;
         }
-        .week-strip .day-cell:hover { background: rgba(63,185,80,0.08); }
+        .week-strip .day-cell:hover { background: #f8fbf6; }
         .week-strip .day-cell .day-name {
             font-size: 11px;
-            color: var(--text2);
+            color: #999;
             font-weight: 500;
         }
         .week-strip .day-cell .day-num {
             font-size: 15px;
             font-weight: 600;
-            color: var(--text);
+            color: #555;
         }
         .week-strip .day-cell .data-dot {
             width: 6px;
@@ -717,14 +703,14 @@
             flex-shrink: 0;
         }
         .week-strip .day-cell.has-data .data-dot {
-            background: rgba(63,185,80,0.85);
+            background: #4a7c59;
         }
         .week-strip .day-cell.today {
-            border-color: var(--accent);
-            background: rgba(63,185,80,0.08);
+            border-color: #4a7c59;
+            background: #f8fbf6;
         }
         .week-strip .day-cell.active {
-            background: rgba(63,185,80,0.85);
+            background: #4a7c59;
         }
         .week-strip .day-cell.active .day-name,
         .week-strip .day-cell.active .day-num {
@@ -744,130 +730,94 @@
     
         /* ===== 身份选择引导页（覆盖层） ===== */
         .onboarding-overlay {
-            background: #efe9de;
             position: fixed; inset: 0; z-index: 9999;
-            background: linear-gradient(145deg, var(--bg) 0%, #e8f0e4 100%);
+            background: linear-gradient(145deg, #f5f0eb 0%, #e8f0e4 100%);
             display: flex; align-items: center; justify-content: center;
             flex-direction: column;
             padding: 24px;
         }
         .onboarding-overlay.hidden { display: none; }
         .onboarding-title {
-            color: var(--accent);
-            font-family: var(--font-title);
-            font-size: 28px; font-weight: 700; color: var(--text);
+            font-size: 28px; font-weight: 700; color: #4a4a4a;
             margin-bottom: 6px; letter-spacing: 1px;
         }
-        .onboarding-sub {
-            color: var(--text2); font-size: 15px; color: var(--text2); margin-bottom: 32px; }
+        .onboarding-sub { font-size: 15px; color: #999; margin-bottom: 32px; }
         .onboarding-cards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 480px; }
-        .onboarding-card { background: rgba(255,255,255,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        .onboarding-card {
             flex: 1; min-width: 180px; max-width: 220px;
-            background: var(--surface); border-radius: 20px; padding: 28px 20px;
+            background: #fff; border-radius: 20px; padding: 28px 20px;
             text-align: center; cursor: pointer;
             box-shadow: 0 4px 20px rgba(0,0,0,0.06);
             transition: all 0.25s;
             border: 2px solid transparent;
         }
-        .onboarding-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); border-color: var(--accent); }
+        .onboarding-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); border-color: #4a7c59; }
         .onboarding-card .emoji { font-size: 48px; margin-bottom: 12px; display: block; }
-        .onboarding-card .name {
-            color: var(--text); font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-        .onboarding-card .desc {
-            color: var(--text2); font-size: 13px; color: var(--text2); line-height: 1.5; }
+        .onboarding-card .name { font-size: 18px; font-weight: 600; color: #4a4a4a; margin-bottom: 6px; }
+        .onboarding-card .desc { font-size: 13px; color: #999; line-height: 1.5; }
         /* 吃药询问弹窗 */
-        .onboarding-dialog {
-            background: rgba(0,0,0,0.6); position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; padding: 24px; }
+        .onboarding-dialog { position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; padding: 24px; }
         .onboarding-dialog.hidden { display: none; }
-        .onboarding-dialog .dialog-card { background: rgba(255,255,255,0.8); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--border);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-            background: var(--surface); border-radius: 20px; padding: 32px 28px;
+        .onboarding-dialog .dialog-card {
+            background: #fff; border-radius: 20px; padding: 32px 28px;
             max-width: 340px; width: 100%; text-align: center;
             box-shadow: 0 10px 40px rgba(0,0,0,0.12);
         }
         .onboarding-dialog .dialog-card .icon { font-size: 42px; margin-bottom: 10px; display: block; }
-        .onboarding-dialog .dialog-card h3 {
-            color: var(--text); font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
-        .onboarding-dialog .dialog-card p {
-            color: var(--text2); font-size: 14px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
+        .onboarding-dialog .dialog-card h3 { font-size: 18px; font-weight: 600; color: #4a4a4a; margin-bottom: 8px; }
+        .onboarding-dialog .dialog-card p { font-size: 14px; color: #888; margin-bottom: 20px; line-height: 1.5; }
         .onboarding-dialog .dialog-actions { display: flex; gap: 12px; justify-content: center; }
         .onboarding-dialog .dialog-actions button {
             padding: 10px 28px; border-radius: 30px; font-size: 15px;
             font-weight: 500; cursor: pointer; transition: all 0.2s;
             border: none;
         }
-        .onboarding-dialog .dialog-actions .btn-yes { background: rgba(63,185,80,0.85); color: #fff; }
-        .onboarding-dialog .dialog-actions .btn-yes:hover { background: var(--accent); }
-        .onboarding-dialog .dialog-actions .btn-no { background: var(--surface2); border: 1px solid var(--border); color: var(--text2); }
-        .onboarding-dialog .dialog-actions .btn-no:hover { background: var(--border); }
+        .onboarding-dialog .dialog-actions .btn-yes { background: #4a7c59; color: #fff; }
+        .onboarding-dialog .dialog-actions .btn-yes:hover { background: #3d6b4b; }
+        .onboarding-dialog .dialog-actions .btn-no { background: #f0ebe5; color: #777; }
+        .onboarding-dialog .dialog-actions .btn-no:hover { background: #e5ddd5; }
 
         /* ===== 设置弹窗 ===== */
         .modal-overlay { position: fixed; inset: 0; z-index: 9000; background: rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; padding: 24px; }
         .modal-overlay.hidden { display: none; }
-        .modal-card { background: rgba(255,255,255,0.8); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--border);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-            background: var(--surface); border-radius: 20px; padding: 28px 24px;
+        .modal-card {
+            background: #fff; border-radius: 20px; padding: 28px 24px;
             max-width: 380px; width: 100%;
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
         }
-        .modal-card h3 {
-            color: var(--text); font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-        .modal-card .modal-close { border: none; background: var(--border); width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer; color: var(--text2); margin-left: auto; }
-        .modal-row {
-            border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .modal-card h3 { font-size: 18px; font-weight: 600; color: #4a4a4a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .modal-card .modal-close { border: none; background: #f0ebe5; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer; color: #888; margin-left: auto; }
+        .modal-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0ebe5; }
         .modal-row:last-child { border-bottom: none; }
-        .modal-row .mlabel {
-            color: var(--text2); font-size: 14px; color: var(--text); font-weight: 500; }
-        .modal-row .mval {
-            color: var(--text); font-size: 14px; color: var(--text2); }
+        .modal-row .mlabel { font-size: 14px; color: #555; font-weight: 500; }
+        .modal-row .mval { font-size: 14px; color: #888; }
         .modal-row button {
             padding: 6px 16px; border-radius: 20px; font-size: 13px;
-            border: 1.5px solid var(--accent); color: var(--accent);
+            border: 1.5px solid #4a7c59; color: #4a7c59;
             background: transparent; cursor: pointer;
         }
         /* 身份标签 */
         .profile-badge {
             display: inline-flex; align-items: center; gap: 6px; font-size: 13px;
-            color: var(--text2); background: var(--border); padding: 4px 14px; border-radius: 20px;
+            color: #888; background: #f0ebe5; padding: 4px 14px; border-radius: 20px;
             margin-left: 8px; cursor: pointer; vertical-align: middle;
         }
-        .profile-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(63,185,80,0.85); display: inline-block; }
-        .btn-settings { border: none; background: transparent; font-size: 20px; cursor: pointer; color: var(--text2); padding: 4px; vertical-align: middle; }
+        .profile-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: #4a7c59; display: inline-block; }
+        .btn-settings { border: none; background: transparent; font-size: 20px; cursor: pointer; color: #999; padding: 4px; vertical-align: middle; }
         .header-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 
         /* ===== 吃药记录 ===== */
         .med-section { display: none; }
         .med-section.visible { display: block; }
-        .med-record { background: rgba(250,246,240,0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; padding: 8px 12px; background: var(--surface2); border-radius: 12px; border: 1px solid var(--border); }
-        .med-record input[type="time"] { padding: 6px 10px; border: 1px solid var(--border); border-radius: 10px; font-size: 13px; background: var(--surface); outline: none; min-width: 90px; }
-        .med-record input[type="number"] { width: 56px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 10px; font-size: 13px; background: var(--surface); outline: none; }
-        .med-record .munit { font-size: 13px; color: var(--text2); }
-        .med-record input[type="text"] { flex: 1; min-width: 80px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 10px; font-size: 13px; background: var(--surface); outline: none; }
-        .med-record .mclose { border: none; background: transparent; color: var(--border); font-size: 16px; cursor: pointer; }
-        .med-add-btn { padding: 5px 16px; border: 1.5px dashed var(--border); border-radius: 20px; font-size: 13px; color: var(--text2); background: transparent; cursor: pointer; }
-        .med-add-btn:hover { border-color: var(--accent); color: var(--accent); }
-        .med-empty { font-size: 13px; color: var(--text2); text-align: center; padding: 12px 0; }
-        .med-diary textarea:focus { border-color: var(--accent); background: var(--surface); }
-        /* ===== 喝水记录 ===== */
-        .water-section { display: none; }
-        .water-section.visible { display: block; }
-        .water-cup-select { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
-        .water-cup-select .cup-label { font-size: 13px; color: #777; font-weight: 500; white-space: nowrap; }
-        .water-cup-option { padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--surface); font-size: 13px; color: var(--text2); cursor: pointer; transition: all 0.2s; }
-        .water-cup-option:hover { border-color: var(--accent2); color: var(--accent2); }
-        .water-cup-option.selected { background: #6b9e7a; color: #fff; border-color: var(--accent2); color: var(--accent2); font-weight: 600; }
-        .water-counter { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .water-counter .water-btn { width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--border); background: rgba(88,166,255,0.08); font-size: 22px; color: var(--accent2); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
-        .water-counter .water-btn:hover { background: rgba(88,166,255,0.15); border-color: var(--accent2); color: var(--accent2); transform: scale(1.05); }
-        .water-counter .water-btn.minus { font-size: 26px; line-height: 1; padding-bottom: 3px; }
-        .water-counter .water-count {
-            font-family: var(--font-mono); font-size: 28px; font-weight: 700; color: var(--accent2); min-width: 40px; text-align: center; }
-        .water-counter .water-total { font-size: 13px; color: var(--text2); margin-left: 8px; }
-        .water-counter .water-reset { padding: 4px 12px; border: none; background: var(--border); border-radius: 14px; font-size: 12px; color: var(--text2); cursor: pointer; }
+        .med-record { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; padding: 8px 12px; background: #fcfaf8; border-radius: 12px; border: 1px solid #f0ebe5; }
+        .med-record input[type="time"] { padding: 6px 10px; border: 1.5px solid #e8e0d8; border-radius: 10px; font-size: 13px; background: #fff; outline: none; min-width: 90px; }
+        .med-record input[type="number"] { width: 56px; padding: 6px 8px; border: 1.5px solid #e8e0d8; border-radius: 10px; font-size: 13px; background: #fff; outline: none; }
+        .med-record .munit { font-size: 13px; color: #aaa; }
+        .med-record input[type="text"] { flex: 1; min-width: 80px; padding: 6px 10px; border: 1.5px solid #e8e0d8; border-radius: 10px; font-size: 13px; background: #fff; outline: none; }
+        .med-record .mclose { border: none; background: transparent; color: #ccc; font-size: 16px; cursor: pointer; }
+        .med-add-btn { padding: 5px 16px; border: 1.5px dashed #c8c0b6; border-radius: 20px; font-size: 13px; color: #999; background: transparent; cursor: pointer; }
+        .med-add-btn:hover { border-color: #4a7c59; color: #4a7c59; }
+        .med-empty { font-size: 13px; color: #bbb; text-align: center; padding: 12px 0; }
         
         @media (max-width: 500px) {
             .onboarding-title { font-size: 22px; }
@@ -875,51 +825,6 @@
             .onboarding-card { min-width: 140px; padding: 20px 14px; }
         }
 
-    
-        :root {
-            --bg: #f5f0e8;
-            --surface: rgba(255,255,255,0.75);
-            --surface2: rgba(250,246,240,0.8);
-            --card: #ffffff;
-            --text: #3d3830;
-            --text2: #9b9488;
-            --accent: #4a7c59;
-            --accent2: #6b9e7a;
-            --warn: #e0a050;
-            --danger: #d05555;
-            --border: #e5ded0;
-            --glow: 0 2px 16px rgba(74,124,89,0.1);
-            --radius: 14px;
-            --font-body: 'ZCOOL QingKe HuangYou', 'Noto Serif SC', 'KaiTi', 'STKaiti', serif;
-            --font-mono: 'Noto Serif SC', 'KaiTi', serif;
-        }
-</style>
-    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(74,124,89,0.04) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(107,158,122,0.03) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.4) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: -1;
-        }
-    </style>
-    <style>
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(74,124,89,0.04) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(107,158,122,0.03) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.4) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: -1;
-        }
     </style>
 </head>
 <body>
@@ -927,19 +832,18 @@
     <!-- ========== 顶部 ========== -->
     <div class="header">
         <div>
-            <h1>⚡ 健康小记</h1>
+            <h1>🌿 健康小记</h1>
             <div class="sub">每天3分钟，记录你的健康</div>
         </div>
-        
-<div class="header-actions">
+        <div class="header-actions">
             <span id="profileBadge" class="profile-badge hidden" onclick="showSettings()">
                 <span class="dot"></span>
                 <span id="profileBadgeText">--</span>
             </span>
-            <button class="btn-settings" onclick="showSettings()" title="设置">🔮</button>
-            <button class="btn-export" onclick="exportData()">⬇️ 导出数据</button>
+            <button class="btn-settings" onclick="showSettings()" title="设置">⚙️</button>
+            <button class="btn-export" onclick="exportData()">📥 导出数据</button>
             <span class="btn-import-wrap">
-                <button class="btn-import">⬆️ 导入</button>
+                <button class="btn-import">📤 导入</button>
                 <input type="file" accept=".json" onchange="importData(event)">
             </span>
         </div>
@@ -947,8 +851,8 @@
 
     <!-- ========== Tab ========== -->
     <div class="tabs">
-        <button class="active" data-tab="daily" onclick="switchTab('daily')">📆 每日记录</button>
-        <button data-tab="weekly" onclick="switchTab('weekly')">📈 周总结</button>
+        <button class="active" data-tab="daily" onclick="switchTab('daily')">📝 每日记录</button>
+        <button data-tab="weekly" onclick="switchTab('weekly')">📊 周总结</button>
     </div>
 
     <div class="container">
@@ -960,9 +864,9 @@
 
             <!-- 日期导航栏 -->
             <div class="date-nav">
-                <button class="nav-arrow" onclick="navigateDay(-1)">◀ 前一天</button>
+                <button class="nav-arrow" onclick="navigateDay(-1)">← 前一天</button>
                 <span class="date-label" id="dateLabel">--</span>
-                <button class="nav-arrow" id="nextDayBtn" onclick="navigateDay(1)">后一天 ▶</button>
+                <button class="nav-arrow" id="nextDayBtn" onclick="navigateDay(1)">后一天 →</button>
                 <button class="today-btn hidden" id="todayBtn" onclick="goToToday()">📍 今天</button>
             </div>
             <!-- 周日历导航条 -->
@@ -970,7 +874,7 @@
 
             <!-- 睡眠 -->
             <div class="card">
-                <div class="card-title"><span class="icon">🌙</span> 睡眠记录</div>
+                <div class="card-title"><span class="icon">😴</span> 睡眠记录</div>
 
                 <div class="form-row">
                     <label>🛌 上床时间</label>
@@ -981,52 +885,34 @@
                 </div>
 
                 <div class="form-row">
-                    <label class="label-wide">💤 深度睡眠占比</label>
+                    <label class="label-wide">😴 深度睡眠占比</label>
                     <input type="number" id="deepSleepPct" min="0" max="100" step="1" placeholder="%">
                     <span class="unit">%</span>
                 </div>
 
                 <div class="form-row">
-                    <label class="label-wide">👀 夜间清醒次数</label>
+                    <label class="label-wide">👁 夜间清醒次数</label>
                     <input type="number" id="awakeCount" min="0" max="20" step="1" value="0" placeholder="0">
                     <span class="unit">次</span>
                 </div>
 
                 <div class="form-row" style="flex-direction:column;align-items:stretch;">
-                    <label>✍️ 复盘 / 备注</label>
+                    <label>📝 复盘 / 备注</label>
                     <textarea id="sleepNotes" placeholder="比如：今天为什么清醒次数多？喝了咖啡？压力大？睡眠质量如何？……&#10;写下来，周总结的时候会汇总到一起看。"></textarea>
                                 <div class="form-row">
-                    <label class="label-wide">💤 零星睡眠</label>
+                    <label class="label-wide">😴 零星睡眠</label>
                     <input type="number" id="napMinutes" min="0" max="480" step="5" placeholder="0" style="width:70px;">
                     <span class="unit">分钟</span>
-                    <span style="font-size:12px;color:var(--text2);">（午睡或零星小睡总时长）</span>
+                    <span style="font-size:12px;color:#aaa;">（午睡或零星小睡总时长）</span>
                 </div>
 </div>
                                 <!-- 零星睡眠（折叠） -->
             </div>
 
-<!-- 喝水记录（上班族专用） -->
-            <div class="card water-section" id="waterCard">
-                <div class="card-title"><span class="icon">🥤</span> 喝水记录</div>
-                <div class="water-cup-select">
-                    <span class="cup-label">杯子大小：</span>
-                    <span class="water-cup-option selected" data-ml="200" onclick="selectCupSize(this, 200)">200ml</span>
-                    <span class="water-cup-option" data-ml="300" onclick="selectCupSize(this, 300)">300ml</span>
-                    <span class="water-cup-option" data-ml="500" onclick="selectCupSize(this, 500)">500ml</span>
-                </div>
-                <div class="water-counter">
-                    <button class="water-btn minus" onclick="changeWater(-1)">−</button>
-                    <span class="water-count" id="waterCount">0</span>
-                    <button class="water-btn plus" onclick="changeWater(1)">+</button>
-                    <span class="water-total">杯 · 总共 <span id="waterTotal">0</span>ml</span>
-                    <button class="water-reset" onclick="resetWater()">归零</button>
-                </div>
-            </div>
-
 <!-- 运动 --><!-- 运动 -->
             <div class="card">
-                <div class="card-title"><span class="icon">🔥</span> 运动记录</div>
-                <div style="font-size:13px;color:var(--text2);margin:-8px 0 12px;">可以记录多次运动，每次选种类和时长</div>
+                <div class="card-title"><span class="icon">🏃</span> 运动记录</div>
+                <div style="font-size:13px;color:#999;margin:-8px 0 12px;">可以记录多次运动，每次选种类和时长</div>
 
                 <div id="exerciseSessions">
                     <!-- 由 JS 动态生成 -->
@@ -1037,11 +923,11 @@
 
             <!-- 饮食 -->
             <div class="card">
-                <div class="card-title"><span class="icon">🍜</span> 饮食记录</div>
+                <div class="card-title"><span class="icon">🍽️</span> 饮食记录</div>
 
                 <div class="diet-row">
-                    <span class="meal-label">🥐 早餐</span>
-                    <span class="toggle-btn active" id="breakfastToggle" onclick="toggleMeal('breakfast')">✓ 吃了</span>
+                    <span class="meal-label">🌅 早餐</span>
+                    <span class="toggle-btn active" id="breakfastToggle" onclick="toggleMeal('breakfast')">✅ 吃了</span>
                     <div class="diet-input-wrap">
                         <input type="text" id="breakfastContent" placeholder="吃了什么？">
                         <div class="diet-feeling">
@@ -1052,8 +938,8 @@
                 </div>
 
                 <div class="diet-row">
-                    <span class="meal-label">🍱 午餐</span>
-                    <span class="toggle-btn active" id="lunchToggle" onclick="toggleMeal('lunch')">✓ 吃了</span>
+                    <span class="meal-label">☀️ 午餐</span>
+                    <span class="toggle-btn active" id="lunchToggle" onclick="toggleMeal('lunch')">✅ 吃了</span>
                     <div class="diet-input-wrap">
                         <input type="text" id="lunchContent" placeholder="吃了什么？">
                         <div class="diet-feeling">
@@ -1064,8 +950,8 @@
                 </div>
 
                 <div class="diet-row">
-                    <span class="meal-label">🍲 晚餐</span>
-                    <span class="toggle-btn active" id="dinnerToggle" onclick="toggleMeal('dinner')">✓ 吃了</span>
+                    <span class="meal-label">🌙 晚餐</span>
+                    <span class="toggle-btn active" id="dinnerToggle" onclick="toggleMeal('dinner')">✅ 吃了</span>
                     <div class="diet-input-wrap">
                         <input type="text" id="dinnerContent" placeholder="吃了什么？">
                         <div class="diet-feeling">
@@ -1078,23 +964,20 @@
 
                           <!-- 吃药记录（养生党专用） -->
               <div class="card med-section" id="medCard">
-                  <div class="card-title"><span class="icon">💉</span> 吃药记录</div>
-                  <div style="font-size:13px;color:var(--text2);margin:-8px 0 12px;">每次吃药时记录时间和次数</div>
+                  <div class="card-title"><span class="icon">💊</span> 吃药记录</div>
+                  <div style="font-size:13px;color:#999;margin:-8px 0 12px;">每次吃药时记录时间和次数</div>
                   <div id="medRecords">
                       <!-- 由 JS 动态生成 -->
                   </div>
                   <button class="med-add-btn" onclick="addMedRecord()">＋ 添加一次吃药记录</button>
-                  <div class="med-diary" style="margin-top:14px;">
-                      <label style="font-size:13px;color:#777;font-weight:500;display:block;margin-bottom:6px;">✍️ 吃药日记</label>
-                      <textarea id="medDiary" placeholder="记录身体感受、是否按时吃药、吃完有什么反应……&#10;可以每天自由写一写" style="width:100%;min-height:80px;padding:10px 12px;border:1.5px solid var(--border);border-radius:12px;font-size:13px;resize:vertical;outline:none;font-family:inherit;background:var(--surface2);box-sizing:border-box;"></textarea>
-                  </div>
               </div>
 
             <!-- 保存 --><!-- 保存 -->
             <div class="save-area">
-                <button class="btn-save" id="saveBtn" onclick="saveDaily()">💿 保存今日记录</button>
+                <button class="btn-save" id="saveBtn" onclick="saveDaily()">💾 保存今日记录</button>
                 <div class="save-toast" id="saveToast">✅ 已保存！</div>
             </div>
+            <div id="storageInfo" style="text-align:center;font-size:11px;color:#bbb;padding-bottom:16px;"></div>
         </div>
 
         <!-- ============================================================ -->
@@ -1104,7 +987,7 @@
 
             <div class="card">
                 <div class="summary-header">
-                    <h2>📈 本周总结</h2>
+                    <h2>📊 本周总结</h2>
                     <div class="week-nav">
                         <button onclick="shiftWeek(-1)">‹</button>
                         <span class="week-label" id="weekLabel">--</span>
@@ -1115,7 +998,7 @@
 
             <!-- 睡眠总结 -->
             <div class="card">
-                <div class="card-title"><span class="icon">💤</span> 睡眠周总结</div>
+                <div class="card-title"><span class="icon">😴</span> 睡眠周总结</div>
 
                 <div class="summary-stat" id="sleepStats">
                     <div class="stat-item">
@@ -1150,7 +1033,7 @@
 
             <!-- 运动总结 -->
             <div class="card">
-                <div class="card-title"><span class="icon">🔥</span> 运动周总结</div>
+                <div class="card-title"><span class="icon">🏃</span> 运动周总结</div>
 
                 <div class="summary-stat">
                     <div class="stat-item">
@@ -1179,7 +1062,7 @@
 
             <!-- 饮食总结 -->
             <div class="card">
-                <div class="card-title"><span class="icon">🍜</span> 饮食周总结</div>
+                <div class="card-title"><span class="icon">🍽️</span> 饮食周总结</div>
 
                 <div class="summary-stat">
                     <div class="stat-item">
@@ -1196,16 +1079,6 @@
                     <strong>💬 本周饮食感受汇总：</strong><br>
                     <span id="dietNotesSummary">暂无数据</span>
                 </div>
-            </div>
-
-            <div class="card" id="aiCard">
-                <div class="card-title"><span class="icon">🤖</span> AI 健康分析</div>
-                <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">基于本周睡眠、运动、饮食数据，AI 给出个性化健康建议</p>
-                <div id="aiContent" style="font-size:14px;line-height:1.9;color:var(--text);padding:16px;background:var(--surface2);border-radius:12px;border:1px solid var(--border);min-height:60px;">
-                    <span style="color:var(--text2);">点击下方按钮，获取本周健康分析 ✨</span>
-                </div>
-                <button id="aiBtn" onclick="requestAIAnalysis()" style="margin-top:12px;padding:10px 24px;border:none;border-radius:24px;background:#6b9e7a;color:#fff;font-family:var(--font-body);font-size:14px;cursor:pointer;transition:all 0.3s;width:100%;">🔍 生成本周健康分析</button>
-                <div id="aiLoading" style="display:none;text-align:center;padding:12px;color:var(--text2);font-size:13px;">⏳ AI 正在分析你的数据...</div>
             </div>
 
         </div>
@@ -1275,61 +1148,162 @@
         let currentViewDate = todayStr();
 
         // ================================================================
-        //  数据读写
+        //  数据读写 (IndexedDB + 内存缓存)
         // ================================================================
-        // ---- 存储抽象层 ----
-        // 现在使用 localStorage，未来可替换为后端 API
-        const storage = {
-            _prefix: 'health_daily_',
-            get(key) {
-                try { return JSON.parse(localStorage.getItem(this._prefix + key) || 'null'); } catch { return null; }
-            },
-            set(key, data) {
-                localStorage.setItem(this._prefix + key, JSON.stringify(data));
+        const DB_NAME = 'healthJournalDB';
+        const STORE_NAME = 'healthStore';
+        let _dataCache = {};
+        let _profileCache = null;
+        let _dbReady = false;
+        let _db = null;
+
+        function idbOpen() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(DB_NAME, 1);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME);
+                    }
+                };
+                req.onsuccess = (e) => { _db = e.target.result; resolve(_db); };
+                req.onerror = (e) => reject(e.target.error);
+            });
+        }
+
+        function idbGet(key) {
+            return new Promise((resolve) => {
+                if (!_db) { resolve(null); return; }
+                try {
+                    const tx = _db.transaction(STORE_NAME, 'readonly');
+                    const store = tx.objectStore(STORE_NAME);
+                    const req = store.get(key);
+                    req.onsuccess = () => resolve(req.result ?? null);
+                    req.onerror = () => resolve(null);
+                } catch(e) { resolve(null); }
+            });
+        }
+
+        function idbSet(key, data) {
+            return new Promise((resolve) => {
+                if (!_db) { resolve(false); return; }
+                try {
+                    const tx = _db.transaction(STORE_NAME, 'readwrite');
+                    const store = tx.objectStore(STORE_NAME);
+                    const req = store.put(data, key);
+                    req.onsuccess = () => resolve(true);
+                    req.onerror = () => resolve(false);
+                } catch(e) { resolve(false); }
+            });
+        }
+
+        async function migrateFromLocalStorage() {
+            const oldData = localStorage.getItem('health_daily_data');
+            const oldProfile = localStorage.getItem('health_daily_profile');
+            let migrated = false;
+            if (oldData) {
+                try {
+                    const data = JSON.parse(oldData);
+                    const existing = await idbGet('data');
+                    if (!existing || Object.keys(existing).length === 0) {
+                        await idbSet('data', data);
+                        _dataCache = data;
+                        localStorage.removeItem('health_daily_data');
+                        migrated = true;
+                    }
+                } catch(e) {}
             }
-        };
-
-        function getData() {
-            return storage.get('data') || {};
+            if (oldProfile) {
+                try {
+                    const profile = JSON.parse(oldProfile);
+                    const existing = await idbGet('profile');
+                    if (!existing) {
+                        await idbSet('profile', profile);
+                        _profileCache = profile;
+                        localStorage.removeItem('health_daily_profile');
+                    }
+                } catch(e) {}
+            }
+            return migrated;
         }
 
-        function setData(data) {
-            storage.set('data', data);
+        async function initStorage() {
+            try {
+                await idbOpen();
+                const migrated = await migrateFromLocalStorage();
+                if (_dataCache === undefined || Object.keys(_dataCache).length === 0) {
+                    const stored = await idbGet('data');
+                    if (stored && typeof stored === 'object' && !Array.isArray(stored)) _dataCache = stored;
+                }
+                if (_profileCache === null) {
+                    const p = await idbGet('profile');
+                    if (p) _profileCache = p;
+                }
+                _dbReady = true;
+                if (migrated) {
+                    setTimeout(() => {
+                        const toast = document.getElementById('saveToast');
+                        if (toast) { toast.textContent = '✅ 数据已迁移到新存储，更稳定更安全！'; toast.classList.add('show');
+                        setTimeout(() => { toast.textContent = '✅ 已保存！'; toast.classList.remove('show'); }, 3000); }
+                    }, 800);
+                }
+            } catch(e) {
+                console.warn('IndexedDB 不可用，回退到 localStorage');
+                const oldData = localStorage.getItem('health_daily_data');
+                if (oldData) { try { _dataCache = JSON.parse(oldData); } catch(e2) {} }
+                const oldProfile = localStorage.getItem('health_daily_profile');
+                if (oldProfile) { try { _profileCache = JSON.parse(oldProfile); } catch(e2) {} }
+                _dbReady = false;
+            }
+            renderStorageInfo();
         }
 
-        function getDayData(dateStr) {
-            const data = getData();
-            return data[dateStr] || null;
+        function getData() { return _dataCache; }
+
+        async function setData(data) {
+            _dataCache = data;
+            if (_dbReady) {
+                const ok = await idbSet('data', data);
+                if (!ok) {
+                    try { localStorage.setItem('health_daily_backup', JSON.stringify(data)); } catch(e) {}
+                }
+            } else {
+                try { localStorage.setItem('health_daily_data', JSON.stringify(data)); } catch(e) {}
+            }
+            renderStorageInfo();
         }
 
-        function saveDayData(dateStr, record) {
-            const data = getData();
-            data[dateStr] = record;
-            setData(data);
+        function getDayData(dateStr) { return _dataCache[dateStr] || null; }
+
+        async function saveDayData(dateStr, record) {
+            _dataCache[dateStr] = record;
+            await setData(_dataCache);
+        }
+
+        function renderStorageInfo() {
+            const el = document.getElementById('storageInfo');
+            if (!el) return;
+            const count = Object.keys(_dataCache).length;
+            const raw = JSON.stringify(_dataCache);
+            const kb = (new Blob([raw]).size / 1024).toFixed(1);
+            const pct = _dbReady ? '' : ' (备)';
+            el.textContent = '📦 已记录 ' + count + ' 天 · ' + kb + ' KB' + pct;
         }
 
         // ---- 用户配置 ----
-        function getProfile() {
-            return storage.get('profile') || null;
+        function getProfile() { return _profileCache; }
+
+        async function setProfile(profile) {
+            _profileCache = profile;
+            if (_dbReady) await idbSet('profile', profile);
+            else try { localStorage.setItem('health_daily_profile', JSON.stringify(profile)); } catch(e) {}
         }
 
-        function setProfile(profile) {
-            storage.set('profile', profile);
-        }
+        function hasProfile() { return _profileCache !== null; }
 
-        function hasProfile() {
-            return getProfile() !== null;
-        }
+        function isWellness() { return _profileCache && _profileCache.identity === 'wellness'; }
 
-        function isWellness() {
-            const p = getProfile();
-            return p && p.identity === 'wellness';
-        }
-
-        function shouldTrackMedication() {
-            const p = getProfile();
-            return p && p.identity === 'wellness' && p.trackMedication === true;
-        }
+        function shouldTrackMedication() { return _profileCache && _profileCache.identity === 'wellness' && _profileCache.trackMedication === true; }
 
         // ================================================================
         //  睡眠时长计算
@@ -1360,14 +1334,14 @@
             const feeling = document.getElementById(meal + 'Feeling');
             const isAte = toggle.textContent.includes('✅');
             if (isAte) {
-                toggle.textContent = '✗ 没吃';
+                toggle.textContent = '❌ 没吃';
                 toggle.classList.remove('active');
                 content.disabled = true;
                 content.value = '';
                 feeling.disabled = true;
                 feeling.value = '';
             } else {
-                toggle.textContent = '✓ 吃了';
+                toggle.textContent = '✅ 吃了';
                 toggle.classList.add('active');
                 content.disabled = false;
                 feeling.disabled = false;
@@ -1390,7 +1364,7 @@
                     <span class="session-label">第${index + 1}次</span>
                     <select>${opts}</select>
                     <input type="number" min="0" max="600" step="5" placeholder="时长" value="${dur}">
-                    <span style="font-size:13px;color:var(--text2);">分钟</span>
+                    <span style="font-size:13px;color:#aaa;">分钟</span>
                     ${index >= 1 ? `<button class="close-btn" onclick="removeSession(this)" title="删除">✕</button>` : ''}
                 </div>
             `;
@@ -1487,7 +1461,7 @@
             }
 
             // 更新保存按钮文案
-            document.getElementById('saveBtn').textContent = isToday ? '💿 保存今日记录' : '💿 保存该日记录';
+            document.getElementById('saveBtn').textContent = isToday ? '💾 保存今日记录' : '💾 保存该日记录';
 
             // 渲染周日历条
             renderWeekStrip(dateStr);
@@ -1508,7 +1482,7 @@
                 const toggle = document.getElementById(m + 'Toggle');
                 const content = document.getElementById(m + 'Content');
                 const feeling = document.getElementById(m + 'Feeling');
-                toggle.textContent = '✓ 吃了';
+                toggle.textContent = '✅ 吃了';
                 toggle.classList.add('active');
                 content.disabled = false;
                 content.value = '';
@@ -1524,6 +1498,12 @@
                     document.getElementById('deepSleepPct').value = dayData.sleep.deepSleepPct ?? '';
                     document.getElementById('awakeCount').value = dayData.sleep.awakeCount ?? '0';
                     document.getElementById('sleepNotes').value = dayData.sleep.notes || '';
+                    // 加载零星睡眠数据
+                    if (dayData.sleep.naps && dayData.sleep.naps.length > 0) {
+                        document.getElementById('napMinutes').value = dayData.sleep.naps[0].durationMin || '';
+                    } else {
+                        document.getElementById('napMinutes').value = '';
+                    }
                     calcSleepDuration();
                 }
                 // ---- 运动 ----
@@ -1541,14 +1521,14 @@
                         const content = document.getElementById(m + 'Content');
                         const feeling = document.getElementById(m + 'Feeling');
                         if (info && info.ate) {
-                            toggle.textContent = '✓ 吃了';
+                            toggle.textContent = '✅ 吃了';
                             toggle.classList.add('active');
                             content.disabled = false;
                             content.value = info.content || '';
                             feeling.disabled = false;
                             feeling.value = info.feeling || '';
                         } else {
-                            toggle.textContent = '✗ 没吃';
+                            toggle.textContent = '❌ 没吃';
                             toggle.classList.remove('active');
                             content.disabled = true;
                             content.value = '';
@@ -1557,16 +1537,6 @@
                         }
                     });
                 }
-                // ---- 吃药 ----
-                if (dayData.medication) {
-                    renderMedRecords(dayData.medication.records || []);
-                    const medDiary = document.getElementById('medDiary');
-                    if (medDiary) medDiary.value = dayData.medication.diary || '';
-                } else { renderMedRecords([]); const md = document.getElementById('medDiary'); if (md) md.value = ''; }
-                // ---- 喝水 ----
-                if (dayData.water) {
-                    setWaterUI(dayData.water.cups, dayData.water.cupMl);
-                } else { resetWater(); }
             }
         }
 
@@ -1630,64 +1600,83 @@
         // ================================================================
         //  保存当前选定日期的记录
         // ================================================================
-        function saveDaily() {
-            const dateStr = currentViewDate;
+        async function saveDaily() {
+            try {
+                const btn = document.getElementById('saveBtn');
+                btn.disabled = true;
+                btn.textContent = '⏳ 保存中...';
 
-            // ---- 睡眠 ----
-            const bedtime = document.getElementById('sleepBedtime').value;
-            const wakeTime = document.getElementById('sleepWakeTime').value;
-            const deepSleepPct = document.getElementById('deepSleepPct').value;
-            const awakeCount = document.getElementById('awakeCount').value;
-            const sleepNotes = document.getElementById('sleepNotes').value.trim();
+                const dateStr = currentViewDate;
 
-            let durationMin = null;
-            if (bedtime && wakeTime) {
-                const [bh, bm] = bedtime.split(':').map(Number);
-                const [wh, wm] = wakeTime.split(':').map(Number);
-                let dm = (wh * 60 + wm) - (bh * 60 + bm);
-                if (dm < 0) dm += 24 * 60;
-                durationMin = dm;
-            }
+                // ---- 睡眠 ----
+                const bedtime = document.getElementById('sleepBedtime').value;
+                const wakeTime = document.getElementById('sleepWakeTime').value;
+                const deepSleepPct = document.getElementById('deepSleepPct').value;
+                const awakeCount = document.getElementById('awakeCount').value;
+                const sleepNotes = document.getElementById('sleepNotes').value.trim();
 
-            const sleep = {
-                bedtime: bedtime || '',
-                wakeTime: wakeTime || '',
-                durationMin: durationMin,
-                deepSleepPct: deepSleepPct !== '' ? +deepSleepPct : null,
-                awakeCount: awakeCount !== '' ? +awakeCount : 0,
-                notes: sleepNotes
-            ,
-                naps: collectNaps()
-            };
+                let durationMin = null;
+                if (bedtime && wakeTime) {
+                    const [bh, bm] = bedtime.split(':').map(Number);
+                    const [wh, wm] = wakeTime.split(':').map(Number);
+                    let dm = (wh * 60 + wm) - (bh * 60 + bm);
+                    if (dm < 0) dm += 24 * 60;
+                    durationMin = dm;
+                }
 
-            // ---- 运动 ----
-            const sessions = collectExerciseSessions().filter(s => s.duration != null && s.duration > 0);
-            const exercise = { sessions };
-
-            // ---- 饮食 ----
-            const diet = {};
-            MEALS.forEach(m => {
-                const toggle = document.getElementById(m + 'Toggle');
-                const content = document.getElementById(m + 'Content');
-                const feeling = document.getElementById(m + 'Feeling');
-                const ate = toggle.textContent.includes('✅');
-                diet[m] = {
-                    ate: ate,
-                    content: ate ? content.value.trim() : '',
-                    feeling: ate ? feeling.value.trim() : ''
+                const sleep = {
+                    bedtime: bedtime || '',
+                    wakeTime: wakeTime || '',
+                    durationMin: durationMin,
+                    deepSleepPct: deepSleepPct !== '' ? +deepSleepPct : null,
+                    awakeCount: awakeCount !== '' ? +awakeCount : 0,
+                    notes: sleepNotes,
+                    naps: collectNaps()
                 };
-            });
 
-            const medication = { records: collectMedRecords(), diary: document.getElementById('medDiary')?.value?.trim() || '' };
-            const water = { cups: parseInt(document.getElementById('waterCount')?.textContent)||0, cupMl: cupSize };
-            const record = { sleep, exercise, diet, medication, water };
-            saveDayData(dateStr, record);
+                // ---- 运动 ----
+                const sessions = collectExerciseSessions().filter(s => s.duration != null && s.duration > 0);
+                const exercise = { sessions };
 
-            const toast = document.getElementById('saveToast');
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
-            // 刷新周日历条以显示新保存的数据标记
-            renderWeekStrip(currentViewDate);
+                // ---- 饮食 ----
+                const diet = {};
+                MEALS.forEach(m => {
+                    const toggle = document.getElementById(m + 'Toggle');
+                    const content = document.getElementById(m + 'Content');
+                    const feeling = document.getElementById(m + 'Feeling');
+                    const ate = toggle.textContent.includes('✅');
+                    diet[m] = {
+                        ate: ate,
+                        content: ate ? content.value.trim() : '',
+                        feeling: ate ? feeling.value.trim() : ''
+                    };
+                });
+
+                const medication = { records: collectMedRecords() };
+                const record = { sleep, exercise, diet, medication };
+                await saveDayData(dateStr, record);
+
+                const toast = document.getElementById('saveToast');
+                toast.textContent = '✅ 已保存！';
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+                renderWeekStrip(currentViewDate);
+                renderStorageInfo();
+            } catch(e) {
+                const toast = document.getElementById('saveToast');
+                toast.textContent = '❌ 保存失败！';
+                toast.style.color = '#e87171';
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    toast.style.color = '#4a7c59';
+                    toast.textContent = '✅ 已保存！';
+                }, 4000);
+            } finally {
+                const btn = document.getElementById('saveBtn');
+                btn.disabled = false;
+                btn.textContent = '💾 保存今日记录';
+            }
         }
 
         // ================================================================
@@ -1787,7 +1776,7 @@
             drawChart('sleepDurationChart', 'line', labels, [{
                 label: '睡眠时长 (小时)',
                 data: durationData,
-                borderColor: 'var(--accent)',
+                borderColor: '#4a7c59',
                 backgroundColor: 'rgba(74,124,89,0.12)',
                 fill: true,
                 tension: 0.3,
@@ -1860,7 +1849,7 @@
                 label: '运动时长 (分钟)',
                 data: exData,
                 backgroundColor: exData.map(v => v > 0 ? 'rgba(74,124,89,0.7)' : 'rgba(200,190,180,0.3)'),
-                borderColor: exData.map(v => v > 0 ? 'var(--accent)' : '#ccc'),
+                borderColor: exData.map(v => v > 0 ? '#4a7c59' : '#ccc'),
                 borderWidth: 1,
                 borderRadius: 4,
             }], { beginAtZero: true });
@@ -1988,63 +1977,32 @@
         // ================================================================
         function exportData() {
             const data = getData();
-            const jsonStr = JSON.stringify(data, null, 2);
-            const blob = new Blob([jsonStr], { type: 'application/json' });
-            
-            if (navigator.userAgent.includes('Windows') || navigator.userAgent.includes('Mac')) {
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = '健康小记_备份_' + todayStr() + '.json';
-                a.click();
-                URL.revokeObjectURL(url);
-                alert('✅ 导出成功！文件已下载到电脑。');
-            } else {
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(jsonStr).then(() => {
-                        alert('✅ 数据已复制到剪贴板！\n\n请粘贴到备忘录或发给自己的微信保存。');
-                    }).catch(() => {
-                        showExportModal(jsonStr);
-                    });
-                } else {
-                    showExportModal(jsonStr);
-                }
-            }
-        }
-        
-        function showExportModal(jsonStr) {
-            const overlay = document.createElement('div');
-            overlay.style.cssText = 'position:fixed;inset:0;z-index:20000;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:20px;';
-            overlay.innerHTML = '<div style="background:#fff;border-radius:16px;padding:24px;max-width:90vw;max-height:80vh;overflow:auto;width:100%;">' +
-                '<h3 style="margin:0 0 12px;">✅ 导出数据</h3>' +
-                '<p style="font-size:13px;color:var(--text2);margin-bottom:12px;">长按下方文字全选复制，然后粘贴保存</p>' +
-                '<textarea readonly style="width:100%;height:200px;font-size:12px;border:1px solid var(--border);border-radius:8px;padding:10px;resize:none;box-sizing:border-box;">' + jsonStr + '</textarea>' +
-                '<button onclick="this.closest('div[style]').parentElement.remove()" style="margin-top:12px;padding:10px 24px;border:none;background:var(--accent);color:#fff;border-radius:20px;font-size:14px;cursor:pointer;width:100%;">关闭</button>' +
-                '</div>';
-            document.body.appendChild(overlay);
-            overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '健康小记_备份_' + todayStr() + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
-        function importData(event) {
+        async function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = async function(e) {
                 try {
                     const imported = JSON.parse(e.target.result);
-                    if (typeof imported !== 'object' || imported === null) throw new Error('无效数据');
                     const current = getData();
-                    let count = 0;
                     for (const key of Object.keys(imported)) {
                         current[key] = imported[key];
-                        count++;
                     }
-                    setData(current);
-                    alert('✅ 导入成功！共导入 ' + count + ' 天的记录。');
+                    await setData(current);
+                    alert('✅ 导入成功！共导入 ' + Object.keys(imported).length + ' 条记录。');
                     if (currentTab === 'daily') loadDate(currentViewDate);
                     else renderWeekly();
                 } catch (err) {
-                    alert('❌ 文件格式不正确，请选择 .json 备份文件。\n\n如果是从微信或备忘录复制的文字，请先粘贴到记事本，保存为 .json 文件后再导入。');
+                    alert('❌ 文件格式不对，请选择正确的备份文件。');
                 }
             };
             reader.readAsText(file);
@@ -2054,9 +2012,10 @@
         // ================================================================
         //  初始化
         // ================================================================
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initStorage();
             if (!hasProfile()) showOnboarding();
-            else { updateProfileUI(); updateSectionVisibility(); }
+            else updateProfileUI();
             loadDate(todayStr());
             document.addEventListener('keydown', function(e) {
                 if ((e.ctrlKey || e.metaKey) && e.key === 's') {
@@ -2086,36 +2045,6 @@
                 return [{ durationMin: +val }];
             }
             return [];
-        }
-
-// ================================================================
-        //  喝水记录
-        // ================================================================
-        let cupSize=200;
-        function selectCupSize(el,ml){
-            document.querySelectorAll('.water-cup-option').forEach(o=>o.classList.remove('selected'));
-            el.classList.add('selected');
-            cupSize=ml;
-        }
-        function changeWater(delta){
-            const cnt=document.getElementById('waterCount');
-            let v=parseInt(cnt.textContent)||0;
-            v=Math.max(0,v+delta);
-            cnt.textContent=v;
-            document.getElementById('waterTotal').textContent=v*cupSize;
-        }
-        function resetWater(){
-            document.getElementById('waterCount').textContent='0';
-            document.getElementById('waterTotal').textContent='0';
-        }
-        function setWaterUI(cups,ml){
-            document.getElementById('waterCount').textContent=cups||0;
-            document.getElementById('waterTotal').textContent=(cups||0)*(ml||200);
-            if(ml)cupSize=ml;
-            document.querySelectorAll('.water-cup-option').forEach(o=>{
-                if(parseInt(o.dataset.ml)===cupSize)o.classList.add('selected');
-                else o.classList.remove('selected');
-            });
         }
 
 // ================================================================
@@ -2150,12 +2079,12 @@
         // ================================================================
         //  身份选择 / 设置
         // ================================================================
-        const IDENTITY_LABELS={office:'💻 上班族',wellness:'🧘 养生党'};
+        const IDENTITY_LABELS={office:'💼 上班族',wellness:'🌿 养生党'};
         function showOnboarding(){document.getElementById('onboardingOverlay').classList.remove('hidden');}
         function selectIdentity(id){if(id==='wellness')document.getElementById('medDialog').classList.remove('hidden');else setProfileAndFinish(id,false);}
-        function setProfileAndFinish(identity,trackMed){
+        async function setProfileAndFinish(identity,trackMed){
             document.getElementById('medDialog').classList.add('hidden');
-            setProfile({identity:identity,trackMedication:trackMed});
+            await setProfile({identity:identity,trackMedication:trackMed});
             document.getElementById('onboardingOverlay').classList.add('hidden');
             updateProfileUI();
             updateSectionVisibility();
@@ -2169,102 +2098,16 @@
         function showSettings(){
             const p=getProfile();if(!p)return;
             document.getElementById('settingsIdentity').textContent=IDENTITY_LABELS[p.identity]||p.identity;
-            document.getElementById('settingsMed').textContent=p.identity==='wellness'?(p.trackMedication?'✓ 记录':'✗ 不记录'):'—';
+            document.getElementById('settingsMed').textContent=p.identity==='wellness'?(p.trackMedication?'✅ 记录':'❌ 不记录'):'—';
             document.getElementById('settingsModal').classList.remove('hidden');
         }
         function hideSettings(){document.getElementById('settingsModal').classList.add('hidden');}
-        function resetProfile(){hideSettings();setProfile(null);showOnboarding();}
+        async function resetProfile(){hideSettings();await setProfile(null);showOnboarding();}
         function updateSectionVisibility(){
             const mc=document.getElementById('medCard');
-            const wc=document.getElementById('waterCard');
-            const p=getProfile();
             if(shouldTrackMedication())mc.classList.add('visible');else mc.classList.remove('visible');
-            if(p&&p.identity==='office')wc.classList.add('visible');else wc.classList.remove('visible');
         }
-        // ================================================================
-        //  AI 周分析 (DeepSeek)
-        // ================================================================
-        function getWeekDataForAI() {
-            var monday = currentWeekMonday;
-            var d = new Date(monday + 'T00:00:00');
-            var days = [];
-            for (var i = 0; i < 7; i++) {
-                var ds = dateStr(d);
-                var dayData = getDayData(ds);
-                if (dayData) days.push({ date: ds, data: dayData });
-                d.setDate(d.getDate() + 1);
-            }
-            return days;
-        }
-        
-        function formatWeekDataForAI(days) {
-            if (days.length === 0) return '本周暂无数据。';
-            var text = '以下是我本周的健康记录数据:';
-            days.forEach(function(d) {
-                var s = d.data.sleep, e = d.data.exercise, dt = d.data.diet, med = d.data.medication, w = d.data.water;
-                text += '\n[' + d.date + '] ';
-                if (s && s.durationMin) {
-                    var h = Math.floor(s.durationMin / 60), m = s.durationMin % 60;
-                    text += '睡眠:' + h + 'h' + m + 'min';
-                    if (s.deepSleepPct) text += ',深度' + s.deepSleepPct + '%';
-                    if (s.awakeCount) text += ',醒' + s.awakeCount + '次';
-                    if (s.notes) text += ',备注:' + s.notes;
-                } else { text += '睡眠:未记录'; }
-                if (e && e.sessions && e.sessions.length > 0) {
-                    var ex = e.sessions.map(function(s){ return (s.type||'运动')+(s.duration?s.duration+'min':''); }).join(',');
-                    text += ' | 运动:' + ex;
-                } else { text += ' | 运动:未记录'; }
-                if (dt) {
-                    var ms = ['breakfast','lunch','dinner'], mn = {breakfast:'早',lunch:'午',dinner:'晚'};
-                    var ate = ms.filter(function(m){ return dt[m]&&dt[m].ate; }).map(function(m){ return mn[m]; });
-                    text += ' | 饮食:' + (ate.length>0?ate.join(',')+'已记录':'未记录');
-                }
-                if (w && w.cups > 0) text += ' | 喝水:' + w.cups + '杯,' + (w.cups*(w.cupMl||200)) + 'ml';
-                if (med && med.records && med.records.length > 0) {
-                    text += ' | 吃药:' + med.records.length + '次';
-                    if (med.diary) text += ',日记:' + med.diary;
-                }
-            });
-            return text;
-        }
-        
-        async function requestAIAnalysis() {
-            var aiC = document.getElementById('aiContent');
-            var aiL = document.getElementById('aiLoading');
-            var aiB = document.getElementById('aiBtn');
-            aiB.disabled = true;
-            aiL.style.display = 'block';
-            aiC.innerHTML = '';
-            var days = getWeekDataForAI();
-            if (days.length === 0) {
-                aiC.innerHTML = '<span style="color:var(--warn);">本周还没有记录任何数据哦,先记录几天再来分析吧</span>';
-                aiL.style.display = 'none';
-                aiB.disabled = false;
-                return;
-            }
-            var weekData = formatWeekDataForAI(days);
-            var prompt = '你是一位温柔有趣的00后健康顾问，像关心朋友的元气女孩。评估标准: 睡眠7-9小时为佳，深度睡眠20%以上，23:00前入睡为好; 运动每周150分钟、至少3天; 饮食三餐规律，漏餐超3次需关注; 喝水每天1.5-2升。请对照这些标准分析用户数据: 1)语气活泼像朋友 2)先夸亮点 3)对照标准指差距 4)给2-3条建议 5)200-300字 6)用emoji。用户数据:\n\n' + weekData;
-            try {
-                var resp = await fetch('https://api.deepseek.com/chat/completions', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer sk-df34767c0d0c4568bcdbe5010ea80198' },
-                    body: JSON.stringify({ model: 'deepseek-chat', messages: [{ role: 'system', content: '你是一位温柔有趣的00后健康顾问。' }, { role: 'user', content: prompt }], max_tokens: 800, temperature: 0.8 })
-                });
-                var result = await resp.json();
-                if (result.choices && result.choices[0]) {
-                    aiC.innerHTML = result.choices[0].message.content.replace(/\n/g, '<br>');
-                } else {
-                    throw new Error(JSON.stringify(result));
-                }
-            } catch(err) {
-                aiC.innerHTML = '<span style="color:var(--danger);">AI 分析暂时不可用,可能是网络问题或API key失效</span>';
-                console.error(err);
-            }
-            aiL.style.display = 'none';
-            aiB.disabled = false;
-        }
-
-document.addEventListener('click',function(e){
+        document.addEventListener('click',function(e){
             if(e.target===document.getElementById('settingsModal'))hideSettings();
             if(e.target===document.getElementById('medDialog'))document.getElementById('medDialog').classList.add('hidden');
         });
@@ -2273,7 +2116,7 @@ document.addEventListener('click',function(e){
 
     <!-- ========== 身份选择引导页 ========== -->
     <div class="onboarding-overlay hidden" id="onboardingOverlay">
-        <div class="onboarding-title">⚡ 欢迎使用健康小记</div>
+        <div class="onboarding-title">🌿 欢迎使用健康小记</div>
         <div class="onboarding-sub">先告诉我你的身份，我会帮你定制记录内容</div>
         <div class="onboarding-cards">
             <div class="onboarding-card" onclick="selectIdentity('office')">
@@ -2292,7 +2135,7 @@ document.addEventListener('click',function(e){
     <!-- ========== 吃药询问弹窗 ========== -->
     <div class="onboarding-dialog hidden" id="medDialog">
         <div class="dialog-card">
-            <span class="icon">💉</span>
+            <span class="icon">💊</span>
             <h3>需要记录吃药吗？</h3>
             <p>如果你有固定服药需求，可以帮你记录<br>每天的吃药时间和次数</p>
             <div class="dialog-actions">
@@ -2305,7 +2148,7 @@ document.addEventListener('click',function(e){
     <!-- ========== 设置弹窗 ========== -->
     <div class="modal-overlay hidden" id="settingsModal">
         <div class="modal-card">
-            <h3>🔮 设置 <button class="modal-close" onclick="hideSettings()">✕</button></h3>
+            <h3>⚙️ 设置 <button class="modal-close" onclick="hideSettings()">✕</button></h3>
             <div class="modal-row">
                 <span class="mlabel">当前身份</span>
                 <span class="mval" id="settingsIdentity">--</span>
