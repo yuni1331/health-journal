@@ -799,6 +799,7 @@
             color: #888; background: #f0ebe5; padding: 4px 14px; border-radius: 20px;
             margin-left: 8px; cursor: pointer; vertical-align: middle;
         }
+        .profile-badge.hidden { display: none; }
         .profile-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: #4a7c59; display: inline-block; }
         .btn-settings { border: none; background: transparent; font-size: 20px; cursor: pointer; color: #999; padding: 4px; vertical-align: middle; }
         .header-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
@@ -1040,6 +1041,7 @@
                 <span id="profileBadgeText">--</span>
             </span>
             <button class="btn-settings" onclick="showSettings()" title="设置">⚙️</button>
+            <a class="switch-identity-link" style="font-size:13px;color:#4a7c59;text-decoration:underline;cursor:pointer;white-space:nowrap;margin-left:4px;" onclick="resetProfile()">切换身份</a>
             <span class="header-extras">
                 <button class="btn-export" onclick="exportData()">📥</button>
                 <span class="btn-import-wrap">
@@ -1371,6 +1373,48 @@
         // ================================================================
         //  工具函数
         // ================================================================
+        // 立即设置日期标签（中文格式）
+        (function(){
+            try {
+                var d = new Date();
+                var pad = function(n){ return n < 10 ? '0'+n : ''+n; };
+                var ds = d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+                var DAYS_CN = ['日','一','二','三','四','五','六'];
+                var day = d.getDay();
+                var formatted = d.getFullYear() + '年' + (d.getMonth()+1) + '月' + d.getDate() + '日 周' + DAYS_CN[day];
+                var el = document.getElementById('dateLabel');
+                if (el) el.textContent = formatted;
+                window._todayStr = ds;
+                // 立即渲染周日历条
+                var strip = document.getElementById('weekStrip');
+                if (strip) {
+                    // 计算本周一
+                    var diff = (day === 0 ? 6 : day - 1);
+                    var monday = new Date(d.getFullYear(), d.getMonth(), d.getDate() - diff);
+                    var html = '';
+                    var NAMES = ['一','二','三','四','五','六','日'];
+                    for (var i = 0; i < 7; i++) {
+                        var dd = new Date(monday);
+                        dd.setDate(monday.getDate() + i);
+                        var dStr = dd.getFullYear() + '-' + pad(dd.getMonth()+1) + '-' + pad(dd.getDate());
+                        var isToday = dStr === ds;
+                        var isActive = isToday; // 初始就是今天
+                        var isFuture = dStr > ds;
+                        var cls = 'day-cell';
+                        if (isToday) cls += ' today';
+                        if (isActive) cls += ' active';
+                        if (isFuture) cls += ' future';
+                        var onclick = isFuture ? '' : ' onclick="goToDate(\'' + dStr + '\')"';
+                        html += '<div class="' + cls + '"' + onclick + '>' +
+                                '<span class="day-name">' + NAMES[i] + '</span>' +
+                                '<span class="day-num">' + dd.getDate() + '</span>' +
+                                '<span class="data-dot"></span>' +
+                                '</div>';
+                    }
+                    strip.innerHTML = html;
+                }
+            } catch(e) { console.error('init date:', e); }
+        })();
         const DAYS = ['日', '一', '二', '三', '四', '五', '六'];
         const MEALS = ['breakfast', 'lunch', 'dinner'];
         const MEAL_NAMES = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐' };
@@ -2382,10 +2426,10 @@
         //  初始化
         // ================================================================
         document.addEventListener('DOMContentLoaded', async function() {
-            await initStorage();
-            if (!hasProfile()) showOnboarding();
-            else updateProfileUI();
-            loadDate(todayStr());
+            try { await initStorage(); } catch(e) { console.error('initStorage:', e); }
+            if (!hasProfile()) { showOnboarding(); }
+            else { try { updateProfileUI(); } catch(e) { console.error('updateProfileUI:', e); } }
+            try { loadDate(todayStr()); } catch(e) { console.error('loadDate:', e); }
             document.addEventListener('keydown', function(e) {
                 if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                     e.preventDefault();
