@@ -1041,7 +1041,7 @@
                 <span id="profileBadgeText">--</span>
             </span>
             <button class="btn-settings" onclick="showSettings()" title="设置">⚙️</button>
-            <a class="switch-identity-link" style="font-size:13px;color:#4a7c59;text-decoration:underline;cursor:pointer;white-space:nowrap;margin-left:4px;" onclick="resetProfile()">切换身份</a>
+            <button style="font-size:13px;color:#4a7c59;background:none;border:none;cursor:pointer;white-space:nowrap;text-decoration:underline;padding:0;" onclick="resetProfile()">切换身份</button>
             <span class="header-extras">
                 <button class="btn-export" onclick="exportData()">📥</button>
                 <span class="btn-import-wrap">
@@ -1365,6 +1365,15 @@
                 </div>
             </div>
 
+            <!-- AI 分析 -->
+            <div class="card" style="border:2px dashed #4a7c59;background:linear-gradient(135deg,#f8fbf6 0%,#f0f7ee 100%);">
+                <div class="card-title"><span class="icon">🤖</span> AI 健康分析</div>
+                <div id="aiResult" style="font-size:14px;color:#666;line-height:1.8;min-height:20px;">点击下方按钮，让 AI 帮你分析本周数据并给出建议</div>
+                <button id="aiBtn" onclick="requestAIAnalysis()" style="width:100%;margin-top:12px;padding:12px;background:#4a7c59;color:#fff;border:none;border-radius:12px;font-size:15px;cursor:pointer;font-weight:600;">🤖 AI 分析本周数据</button>
+                <div id="aiLoading" style="display:none;text-align:center;margin-top:8px;color:#999;font-size:13px;">⏳ AI 正在分析中，请稍候…</div>
+                <div id="aiError" style="display:none;text-align:center;margin-top:8px;color:#c0392b;font-size:13px;"></div>
+            </div>
+
         </div>
 
     </div>
@@ -1415,6 +1424,32 @@
                 }
             } catch(e) { console.error('init date:', e); }
         })();
+        // 兜底函数，确保 onclick 事件可用
+        window.resetProfile = function() { document.getElementById('onboardingOverlay').classList.remove('hidden'); };
+        window.selectIdentity = function(id) {
+            if (id === 'wellness') {
+                document.getElementById('medDialog').classList.remove('hidden');
+            } else if (window.setProfileAndFinish) {
+                window.setProfileAndFinish(id, false);
+            }
+        };
+        window.setProfileAndFinish = async function(identity, trackMed) {
+            try {
+                document.getElementById('medDialog').classList.add('hidden');
+                _profileCache = {identity: identity, trackMedication: trackMed};
+                try { localStorage.setItem('health_daily_profile', JSON.stringify(_profileCache)); } catch(e){}
+                document.getElementById('onboardingOverlay').classList.add('hidden');
+                var badge = document.getElementById('profileBadge');
+                var text = document.getElementById('profileBadgeText');
+                if (badge) badge.classList.remove('hidden');
+                if (text) text.textContent = identity === 'wellness' ? '🌿 养生党' : '💼 上班族';
+                // 切换板块可见性
+                var mc = document.getElementById('medCard');
+                var wc = document.getElementById('waterCard');
+                if (mc) { if (identity === 'wellness' && trackMed) mc.classList.add('visible'); else mc.classList.remove('visible'); }
+                if (wc) { if (identity === 'office') wc.classList.add('visible'); else wc.classList.remove('visible'); }
+            } catch(e) { console.error('setProfileAndFinish (fallback):', e); }
+        };
         const DAYS = ['日', '一', '二', '三', '四', '五', '六'];
         const MEALS = ['breakfast', 'lunch', 'dinner'];
         const MEAL_NAMES = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐' };
@@ -2597,15 +2632,26 @@
         // ================================================================
         const IDENTITY_LABELS={office:'💼 上班族',wellness:'🌿 养生党'};
         function showOnboarding(){document.getElementById('onboardingOverlay').classList.remove('hidden');}
-        function selectIdentity(id){if(id==='wellness')document.getElementById('medDialog').classList.remove('hidden');else setProfileAndFinish(id,false);}
-        async function setProfileAndFinish(identity,trackMed){
-            document.getElementById('medDialog').classList.add('hidden');
-            await setProfile({identity:identity,trackMedication:trackMed});
-            document.getElementById('onboardingOverlay').classList.add('hidden');
-            updateProfileUI();
-            updateSectionVisibility();
-            if(currentTab==='daily')loadDate(currentViewDate);else renderWeekly();
+        function selectIdentity(id){
+            try {
+                if(id==='wellness'){
+                    document.getElementById('medDialog').classList.remove('hidden');
+                } else {
+                    setProfileAndFinish(id,false);
+                }
+            } catch(e) { console.error('selectIdentity:', e); }
         }
+        async function setProfileAndFinish(identity,trackMed){
+            try {
+                document.getElementById('medDialog').classList.add('hidden');
+                await setProfile({identity:identity,trackMedication:trackMed});
+                document.getElementById('onboardingOverlay').classList.add('hidden');
+                updateProfileUI();
+                updateSectionVisibility();
+                if(currentTab==='daily') loadDate(currentViewDate); else renderWeekly();
+            } catch(e) { console.error('setProfileAndFinish:', e); }
+        }
+        window.setProfileAndFinish = setProfileAndFinish;
         function updateProfileUI(){
             const p=getProfile(),badge=document.getElementById('profileBadge'),text=document.getElementById('profileBadgeText');
             if(p){badge.classList.remove('hidden');text.textContent=IDENTITY_LABELS[p.identity]||p.identity;}
@@ -2615,6 +2661,7 @@
             const p=getProfile();if(!p)return;
             document.getElementById('settingsIdentity').textContent=IDENTITY_LABELS[p.identity]||p.identity;
             document.getElementById('settingsMed').textContent=p.identity==='wellness'?(p.trackMedication?'✅ 记录':'❌ 不记录'):'—';
+            document.getElementById('deepseekKey').value = getDeepseekKey();
             document.getElementById('settingsModal').classList.remove('hidden');
         }
         function hideSettings(){document.getElementById('settingsModal').classList.add('hidden');}
@@ -2632,6 +2679,47 @@
             if(e.target===document.getElementById('settingsModal'))hideSettings();
             if(e.target===document.getElementById('medDialog'))document.getElementById('medDialog').classList.add('hidden');
         });
+        }
+        function saveDeepseekKey() {
+            var key = document.getElementById('deepseekKey').value.trim();
+            localStorage.setItem('deepseek_api_key', key);
+            alert(key ? '✅ API Key 已保存' : '✅ API Key 已清除');
+        }
+        function getDeepseekKey() { return localStorage.getItem('deepseek_api_key') || ''; }
+        async function requestAIAnalysis() {
+            var key = getDeepseekKey();
+            if (!key) { alert('⚠️ 请先在设置中填写 DeepSeek API Key'); return; }
+            var btn = document.getElementById('aiBtn');
+            var load = document.getElementById('aiLoading');
+            var err = document.getElementById('aiError');
+            var result = document.getElementById('aiResult');
+            btn.disabled = true; load.style.display = 'block'; err.style.display = 'none';
+            try {
+                // 收集本周数据
+                var monday = getMonday(todayStr());
+                var dates = []; for (var i = 0; i < 7; i++) { var d = new Date(monday); d.setDate(d.getDate()+i); dates.push(dateStr(d)); }
+                var records = dates.map(function(ds) { return getDayData(ds); }).filter(Boolean);
+                if (records.length === 0) { result.textContent = '本周暂无数据，请先记录再分析'; return; }
+                var summary = { sleep: [], exercise: [], diet: [] };
+                records.forEach(function(r) {
+                    if (r.sleep && r.sleep.bedTime && r.sleep.wakeTime) summary.sleep.push({ bed: r.sleep.bedTime, wake: r.sleep.wakeTime, deep: r.sleep.deepMinutes || 0, awake: r.sleep.awakeCount || 0, note: r.sleep.notes || '' });
+                    if (r.exercise && r.exercise.sessions) r.exercise.sessions.forEach(function(s) { summary.exercise.push(s); });
+                    if (r.diet) summary.diet.push(r.diet);
+                });
+                var prompt = '你是专业健康管理师。以下是用户本周记录，请用中文给出500字以内的健康周总结，包括：1)睡眠分析（时长、规律性）2)运动建议 3)饮食反馈 4)综合建议。语气温暖有鼓励感。\n数据：' + JSON.stringify(summary);
+                var resp = await fetch('https://api.deepseek.com/v1/chat/completions', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+                    body: JSON.stringify({ model: 'deepseek-chat', messages: [{ role: 'user', content: prompt }], max_tokens: 800, temperature: 0.7 })
+                });
+                if (!resp.ok) throw new Error('API 错误 ' + resp.status);
+                var data = await resp.json();
+                result.textContent = data.choices[0].message.content;
+            } catch(e) {
+                err.textContent = '❌ 分析失败：' + e.message;
+                err.style.display = 'block';
+            } finally {
+                btn.disabled = false; load.style.display = 'none';
+            }
         }
 
 </script>
@@ -2682,6 +2770,14 @@
             <div class="modal-row">
                 <span class="mlabel">切换身份</span>
                 <button onclick="resetProfile()">重新选择</button>
+            </div>
+            <div class="modal-row" style="flex-direction:column;align-items:flex-start;gap:8px;">
+                <span class="mlabel">DeepSeek API Key</span>
+                <input type="password" id="deepseekKey" placeholder="sk-..." style="width:100%;padding:8px 12px;border:1.5px solid #e0dcd5;border-radius:8px;font-size:13px;outline:none;">
+                <div style="display:flex;gap:8px;">
+                    <button onclick="saveDeepseekKey()" style="background:#4a7c59;color:#fff;border:none;padding:6px 16px;border-radius:16px;font-size:13px;cursor:pointer;">保存</button>
+                    <span style="font-size:11px;color:#999;line-height:2;">点<a href="https://platform.deepseek.com" target="_blank" style="color:#4a7c59;">这里</a>申请 | 存在本地，不上传</span>
+                </div>
             </div>
         </div>
     </div>
