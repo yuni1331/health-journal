@@ -822,7 +822,13 @@
         .med-add-btn { padding: 5px 16px; border: 1.5px dashed #c8c0b6; border-radius: 20px; font-size: 13px; color: #999; background: transparent; cursor: pointer; }
         .med-add-btn:hover { border-color: #4a7c59; color: #4a7c59; }
         .med-empty { font-size: 13px; color: #bbb; text-align: center; padding: 12px 0; }
+        .med-record select { padding: 6px 8px; border: 1.5px solid #e8e0d8; border-radius: 10px; font-size: 13px; background: #fff; outline: none; min-width: 52px; color: #555; }
+        .med-record textarea { flex: 1; min-width: 100px; padding: 6px 10px; border: 1.5px solid #e8e0d8; border-radius: 10px; font-size: 13px; background: #fff; outline: none; resize: none; font-family: inherit; }
         
+        /* ===== 喝水/饮品添加行 ===== */
+        .water-add-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .water-add-row select { padding: 6px 10px; border: 1.5px solid #e0dcd5; border-radius: 16px; font-size: 13px; background: #fff; outline: none; color: #555; }
+
         /* ===== 喝水记录 ===== */
         .water-section { display: none; }
         .water-section.visible { display: block; }
@@ -850,6 +856,27 @@
             border-radius: 5px; transition: width 0.4s ease;
         }
         .water-progress-pct { font-size: 12px; color: #6ab8e0; text-align: right; }
+        .water-progress-slider-wrap { position: relative; margin: 6px 0 2px; }
+        .water-range-slider {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            -webkit-appearance: none; appearance: none; background: transparent;
+            margin: 0; cursor: pointer; z-index: 2;
+        }
+        .water-range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 22px; height: 22px; border-radius: 50%;
+            background: #4a7c59; border: 3px solid #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2); cursor: pointer; margin-top: -8px;
+        }
+        .water-range-slider::-moz-range-thumb {
+            width: 22px; height: 22px; border-radius: 50%;
+            background: #4a7c59; border: 3px solid #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2); cursor: pointer;
+        }
+        .water-scale {
+            display: flex; justify-content: space-between; font-size: 10px;
+            color: #aaa; padding: 0 2px; margin-top: 2px;
+        }
         .water-quick-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
         .water-quick-btn {
             padding: 8px 16px; border: 1.5px solid #c8dce8; border-radius: 22px;
@@ -1068,10 +1095,10 @@
 
             <!-- 日期导航栏 -->
             <div class="date-nav">
-                <button class="nav-arrow" onclick="navigateDay(-1)">← 前一天</button>
+                <button class="nav-arrow" onclick="(function(){var d=new Date(currentViewDate+'T00:00:00');d.setDate(d.getDate()-1);var nd=dateStr(d);loadDate(nd)}())">← 前一天</button>
                 <span class="date-label" id="dateLabel">--</span>
-                <button class="nav-arrow" id="nextDayBtn" onclick="navigateDay(1)">后一天 →</button>
-                <button class="today-btn hidden" id="todayBtn" onclick="goToToday()">📍 今天</button>
+                <button class="nav-arrow" id="nextDayBtn" onclick="(function(){var d=new Date(currentViewDate+'T00:00:00');d.setDate(d.getDate()+1);var nd=dateStr(d);if(nd>todayStr())return;loadDate(nd)}())">后一天 →</button>
+                <button class="today-btn hidden" id="todayBtn" onclick="loadDate(todayStr())">📍 今天</button>
             </div>
             <!-- 周日历导航条 -->
             <div class="week-strip" id="weekStrip"></div>
@@ -1192,64 +1219,35 @@
 
               <div class="card med-section" id="medCard">
                   <div class="card-title"><span class="icon">💊</span> 吃药记录</div>
-                  <div style="font-size:13px;color:#999;margin:-8px 0 12px;">每次吃药时记录时间和次数</div>
-                  <div id="medRecords">
-                      <!-- 由 JS 动态生成 -->
-                  </div>
-                  <button class="med-add-btn" onclick="addMedRecord()">＋ 添加一次吃药记录</button>
                   <div class="med-diary">
                       <label>📝 今日吃药日记</label>
-                      <textarea id="medDiary" placeholder="今天身体感受怎么样？药效如何？有没有副作用？体温变化？……"></textarea>
+                      <textarea id="medDiary" placeholder="今天吃了什么药？什么时间？几片？身体感觉怎么样？……"></textarea>
                   </div>
               </div>
 
               <!-- 喝水记录（上班族专用） -->
               <div class="card water-section" id="waterCard">
                   <div class="card-title"><span class="icon">💧</span> 喝水记录</div>
-                  <!-- 纯水进度 -->
                   <div class="water-progress-wrap">
                       <div class="water-progress-header">
                           <span class="water-total" id="waterTotal">0ml</span>
                           <span class="water-goal">目标 2000ml / 天</span>
                       </div>
-                      <div class="water-progress-bar">
-                          <div class="water-progress-fill" id="waterProgressFill" style="width:0%"></div>
+                      <div style="position:relative;height:40px;display:flex;align-items:center;">
+                          <div class="water-progress-bar" style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);z-index:1;">
+                              <div class="water-progress-fill" id="waterProgressFill" style="width:0%"></div>
+                          </div>
+                          <input type="range" id="waterSlider" min="0" max="2000" step="50" value="0" style="position:absolute;left:0;width:100%;z-index:2;-webkit-appearance:none;appearance:none;background:transparent;height:40px;margin:0;cursor:pointer;" oninput="var v=+this.value;var p=Math.round(v/2000*100);document.getElementById('waterProgressFill').style.width=p+'%';document.getElementById('waterTotal').textContent=v+'ml';document.getElementById('waterProgressPct').textContent=p+'%';if(window._setWater)window._setWater(v)" onchange="var v=+this.value;var p=Math.round(v/2000*100);document.getElementById('waterProgressFill').style.width=p+'%';document.getElementById('waterTotal').textContent=v+'ml';document.getElementById('waterProgressPct').textContent=p+'%';if(window._setWater)window._setWater(v)">
                       </div>
+                      <div class="water-scale" style="display:flex;justify-content:space-between;font-size:10px;color:#aaa;padding:0 2px;margin-top:2px;"><span>0</span><span>500</span><span>1000</span><span>1500</span><span>2000ml</span></div>
                       <div class="water-progress-pct" id="waterProgressPct">0%</div>
                   </div>
-                  <!-- 纯水快速添加 -->
-                  <div style="font-size:13px;color:#999;margin-bottom:8px;">💧 纯饮水（计入总量）</div>
-                  <div class="water-quick-btns">
-                      <button class="water-quick-btn" onclick="addWaterItem(200)">200ml</button>
-                      <button class="water-quick-btn" onclick="addWaterItem(300)">300ml</button>
-                      <button class="water-quick-btn" onclick="addWaterItem(500)">500ml</button>
-                      <span class="water-custom-inline">
-                          <input type="number" id="waterCustomInput" min="50" max="2000" step="50" value="200" placeholder="ml">
-                          <button class="water-add-ok" onclick="addWaterCustom()">➕</button>
-                      </span>
-                  </div>
-                  <div class="water-record-list" id="waterRecords">
-                      <div class="water-empty">今天还没喝过水</div>
-                  </div>
 
-                  <!-- 分隔线 -->
                   <div style="border-top:1px dashed #e0dcd5;margin:16px 0 10px;"></div>
-
-                  <!-- 其他饮品 -->
-                  <div style="font-size:13px;color:#999;margin-bottom:8px;">🥤 其他饮品（不计入饮水总量）</div>
-                  <div class="water-quick-btns">
-                      <button class="water-quick-btn beverage-btn" onclick="addBeverageItem(250,'咖啡')">☕ 咖啡 250ml</button>
-                      <button class="water-quick-btn beverage-btn" onclick="addBeverageItem(250,'茶')">🍵 茶 250ml</button>
-                      <button class="water-quick-btn beverage-btn" onclick="addBeverageItem(300,'牛奶')">🥛 牛奶 300ml</button>
-                      <span class="water-custom-inline">
-                          <input type="number" id="beverageCustomMl" min="50" max="2000" step="50" value="200" placeholder="ml">
-                          <input type="text" id="beverageCustomLabel" maxlength="10" value="饮料" style="width:60px;padding:6px 8px;border:1.5px solid #e0dcd5;border-radius:16px;font-size:13px;outline:none;text-align:center;">
-                          <button class="water-add-ok" onclick="addBeverageCustom()" style="background:#c9a96e;">➕</button>
-                      </span>
-                  </div>
-                  <div class="water-record-list" id="beverageRecords">
-                      <div class="water-empty">暂无其他饮品记录</div>
-                  </div>
+                  <div style="font-size:13px;color:#999;margin-bottom:8px;">🥤 饮品（不计入水量）</div>
+                  <div style="font-size:12px;color:#bbb;margin-bottom:8px;">记录每天喝了几次饮品</div>
+                  <div id="beverageSessions"></div>
+                  <button class="ex-add-btn" onclick="addBeverageSession()" style="margin-top:10px;">＋ 添加一次饮品</button>
               </div>
 
             <!-- 保存 --><!-- 保存 -->
@@ -1414,8 +1412,8 @@
                         if (isToday) cls += ' today';
                         if (isActive) cls += ' active';
                         if (isFuture) cls += ' future';
-                        var onclick = isFuture ? '' : ' onclick="goToDate(\'' + dStr + '\')"';
-                        html += '<div class="' + cls + '"' + onclick + '>' +
+                        var onclick = isFuture ? '' : ' onclick="(function(){loadDate(\'' + dStr + '\')})()"';
+                        html += '<div class="' + cls + '" data-date="' + dStr + '"' + onclick + '>' +
                                 '<span class="day-name">' + NAMES[i] + '</span>' +
                                 '<span class="day-num">' + dd.getDate() + '</span>' +
                                 '<span class="data-dot"></span>' +
@@ -1830,6 +1828,8 @@
         // ================================================================
         function loadDate(dateStr) {
             currentViewDate = dateStr;
+            // 第一时间更新周历条（防止后续异常打断）
+            try { renderWeekStrip(dateStr); } catch(e) { console.error('renderWeekStrip:', e); }
             const dayData = getDayData(dateStr);
             const isToday = (dateStr === todayStr());
 
@@ -1849,9 +1849,6 @@
 
             // 更新保存按钮文案
             document.getElementById('saveBtn').textContent = isToday ? '💾 保存今日记录' : '💾 保存该日记录';
-
-            // 渲染周日历条
-            renderWeekStrip(dateStr);
 
             // 重置睡眠
             document.getElementById('sleepBedtime').value = '';
@@ -1929,25 +1926,18 @@
                     });
                 }
                 // ---- 吃药 ----
-                if (dayData.medication) {
-                    if (dayData.medication.records) renderMedRecords(dayData.medication.records);
-                    const medDiaryEl = document.getElementById('medDiary');
-                    if (medDiaryEl) medDiaryEl.value = dayData.medication.dailyNote || '';
-                } else {
-                    renderMedRecords([]);
-                    const medDiaryEl = document.getElementById('medDiary');
-                    if (medDiaryEl) medDiaryEl.value = '';
-                }
+                const medDiaryEl = document.getElementById('medDiary');
+                if (medDiaryEl) medDiaryEl.value = (dayData.medication && dayData.medication.dailyNote) || '';
                 // ---- 喝水 ----
                 setWaterData(dayData.waterIntake || []);
             } else {
                 // 无数据：清空吃药和喝水
-                renderMedRecords([]);
                 const medDiaryEl2 = document.getElementById('medDiary');
                 if (medDiaryEl2) medDiaryEl2.value = '';
                 setWaterData([]);
             }
         }
+        window._loadDate = loadDate; // 暴露给早期兜底函数
 
         // 翻页
         function navigateDay(delta) {
@@ -1986,42 +1976,56 @@
             if (ds > todayStr()) return;
             loadDate(ds);
         }
-
         // ================================================================
         //  绘制周日历导航条
         // ================================================================
         function renderWeekStrip(activeDateStr) {
             const strip = document.getElementById('weekStrip');
-            const monday = getMonday(activeDateStr);
-            const today = todayStr();
+            if (!strip) return;
+            // 直接操作现有 DOM，不替换 innerHTML
+            const cells = strip.querySelectorAll('.day-cell');
+            const target = strip.querySelector('[data-date="' + activeDateStr + '"]');
             const allData = getData();
-            const DAY_NAMES_CN = ['一', '二', '三', '四', '五', '六', '日'];
-
-            let html = '';
-            for (let i = 0; i < 7; i++) {
-                const d = new Date(monday);
-                d.setDate(d.getDate() + i);
-                const ds = dateStr(d);
-                const hasData = !!allData[ds];
-                const isToday = ds === today;
-                const isActive = ds === activeDateStr;
-                const isFuture = ds > today;
-
-                let cls = 'day-cell';
-                if (hasData) cls += ' has-data';
-                if (isToday) cls += ' today';
-                if (isActive) cls += ' active';
-                if (isFuture) cls += ' future';
-
-                const onclick = isFuture ? '' : ` onclick="goToDate('${ds}')"`;
-
-                html += `<div class="${cls}"${onclick}>`;
-                html += `<span class="day-name">${DAY_NAMES_CN[i]}</span>`;
-                html += `<span class="day-num">${d.getDate()}</span>`;
-                html += `<span class="data-dot"></span>`;
-                html += `</div>`;
+            const today = todayStr();
+            cells.forEach(function(c) { c.classList.remove('active'); });
+            if (target) {
+                target.classList.add('active');
+                // 同时更新所有格子的 has-data 状态（灰圈/绿圈）
+                cells.forEach(function(c) {
+                    var d = c.getAttribute('data-date');
+                    if (d && allData[d]) c.classList.add('has-data');
+                    else c.classList.remove('has-data');
+                });
+            } else {
+                // 现有 DOM 没有目标日期（跨周），再重建
+                strip.setAttribute('data-active', activeDateStr);
+                const monday = getMonday(activeDateStr);
+                const today = todayStr();
+                const allData = getData();
+                const DAY_NAMES_CN = ['一', '二', '三', '四', '五', '六', '日'];
+                let html = '';
+                for (let i = 0; i < 7; i++) {
+                    const d = new Date(monday);
+                    d.setDate(d.getDate() + i);
+                    const ds = dateStr(d);
+                    const hasData = !!allData[ds];
+                    const isToday = ds === today;
+                    const isActive = ds === activeDateStr;
+                    const isFuture = ds > today;
+                    let cls = 'day-cell';
+                    if (hasData) cls += ' has-data';
+                    if (isToday) cls += ' today';
+                    if (isActive) cls += ' active';
+                    if (isFuture) cls += ' future';
+                    const onclick = isFuture ? '' : ' onclick="(function(){loadDate(\'' + ds + '\')})()"';
+                    html += '<div class="' + cls + '" data-date="' + ds + '"' + onclick + '>';
+                    html += '<span class="day-name">' + DAY_NAMES_CN[i] + '</span>';
+                    html += '<span class="day-num">' + d.getDate() + '</span>';
+                    html += '<span class="data-dot"></span>';
+                    html += '</div>';
+                }
+                strip.innerHTML = html;
             }
-            strip.innerHTML = html;
         }
 
         // ================================================================
@@ -2081,7 +2085,7 @@
                 });
 
                 const medDiary = document.getElementById('medDiary')?.value.trim() || '';
-                const medication = { records: collectMedRecords(), dailyNote: medDiary };
+                const medication = { dailyNote: medDiary };
                 const waterIntake = getWaterData();
                 const record = { sleep, exercise, diet, medication, waterIntake };
                 await saveDayData(dateStr, record);
@@ -2461,6 +2465,9 @@
         // ================================================================
         //  初始化
         // ================================================================
+        // 喝水简化：滑杆 + 饮品添加按钮
+
+
         document.addEventListener('DOMContentLoaded', async function() {
             try { await initStorage(); } catch(e) { console.error('initStorage:', e); }
             if (!hasProfile()) { showOnboarding(); }
@@ -2496,34 +2503,9 @@
             return [];
         }
 
-// ================================================================
-        //  吃药记录
         // ================================================================
-        let medCount=0;
-        function createMedRecordHTML(i,t,d,n) {
-            return `<div class="med-record" data-med-index="${i}"><span class="mlbl">第${i+1}次</span><input type="time" class="med-time" value="${t||''}" placeholder="时间"><input type="number" class="med-dosage" value="${d||''}" min="0" max="99" step="0.5"><span class="munit">次/粒</span><input type="text" class="med-notes" value="${n||''}" placeholder="备注"><button class="mclose" onclick="removeMedRecord(this)">✕</button></div>`;
-        }
-        function renderMedRecords(r) {
-            const c=document.getElementById('medRecords');const d=r||[];medCount=d.length;
-            c.innerHTML=d.length?d.map((r,i)=>createMedRecordHTML(i,r.time,r.dosage,r.notes)).join(''):'<div class="med-empty">今天还没记录吃药</div>';
-        }
-        function addMedRecord() {
-            const c=document.getElementById('medRecords');if(c.querySelector('.med-empty'))c.innerHTML='';
-            c.insertAdjacentHTML('beforeend',createMedRecordHTML(medCount,'','',''));medCount++;
-        }
-        function removeMedRecord(b) {
-            const r=b.closest('.med-record');r.remove();medCount--;
-            document.querySelectorAll('.med-record').forEach((r,i)=>{r.dataset.medIndex=i;r.querySelector('.mlbl').textContent='第'+(i+1)+'次';});
-            if(!document.querySelectorAll('.med-record').length)document.getElementById('medRecords').innerHTML='<div class="med-empty">今天还没记录吃药</div>';
-        }
-        function collectMedRecords() {
-            const records=[];
-            document.querySelectorAll('.med-record').forEach(r=>{
-                const t=r.querySelector('.med-time').value,d=r.querySelector('.med-dosage').value,n=r.querySelector('.med-notes').value.trim();
-                if(t&&d)records.push({time:t,dosage:d!==''?+d:null,notes:n});
-            });
-            return records;
-        }
+        //  吃药记录（已简化为纯日记文本框，无动态表单）
+        // ================================================================
 
         // ================================================================
         //  喝水记录
@@ -2570,47 +2552,27 @@
             renderAllWater();
         }
         function renderAllWater() {
-            // 饮水进度条（只算纯水）
-            const total = _waterList.reduce((s, r) => s + r.ml, 0);
-            const pct = Math.min(100, Math.round((total / WATER_GOAL) * 100));
+            // 总水量（滑杆直接控制）
+            var total = _waterList.reduce(function(s, r) { return s + r.ml; }, 0);
+            var pct = Math.min(100, Math.round((total / WATER_GOAL) * 100));
             document.getElementById('waterTotal').textContent = total + 'ml';
             document.getElementById('waterProgressFill').style.width = pct + '%';
             document.getElementById('waterProgressPct').textContent = pct + '%';
+            // 同步滑杆
+            var s = document.getElementById('waterSlider');
+            if (s) s.value = total;
 
-            // 纯水列表
-            const wc = document.getElementById('waterRecords');
-            if (_waterList.length === 0) {
-                wc.innerHTML = '<div class="water-empty">今天还没喝过水</div>';
-            } else {
-                wc.innerHTML = _waterList.map((r, i) =>
-                    `<div class="water-record-row">
-                        <span class="w-time">${r.time}</span>
-                        <span class="w-amount">${r.ml}ml</span>
-                        <span class="w-label">💧 水</span>
-                        <button class="w-del" onclick="removeWaterItem(${i})" title="删除">✕</button>
-                    </div>`
-                ).join('');
-            }
-
-            // 饮品列表
-            const bc = document.getElementById('beverageRecords');
-            if (_beverageList.length === 0) {
-                bc.innerHTML = '<div class="water-empty">暂无其他饮品记录</div>';
-            } else {
-                bc.innerHTML = _beverageList.map((r, i) =>
-                    `<div class="water-record-row">
-                        <span class="w-time">${r.time}</span>
-                        <span class="w-amount">${r.ml}ml</span>
-                        <span class="w-label">🥤 ${r.label}</span>
-                        <button class="w-del" onclick="removeBeverageItem(${i})" title="删除">✕</button>
-                    </div>`
-                ).join('');
+            // 饮品列表（用运动记录模式）
+            if (typeof renderBeverageSessions === 'function') {
+                renderBeverageSessions(_beverageList);
             }
         }
         function getWaterData() {
+            // 从 DOM 读取饮品表单（运动记录模式）
+            var beverages = (typeof collectBeverageSessions === 'function') ? collectBeverageSessions() : _beverageList;
             return {
                 water: _waterList.length > 0 ? _waterList.slice() : [],
-                beverages: _beverageList.length > 0 ? _beverageList.slice() : []
+                beverages: beverages
             };
         }
         function setWaterData(data) {
@@ -2749,6 +2711,51 @@
         if (window.matchMedia('(display-mode: standalone)').matches) {
             var ib = document.getElementById('installBtn');
             if (ib) ib.style.display = 'none';
+        }
+
+        // 饮品添加（运动记录模式）
+        const BEVERAGE_TYPES = ['咖啡', '茶', '牛奶', '果汁', '可乐', '其他'];
+        const MAX_BEVERAGES = 5;
+        let beverageCount = 0;
+        function createBeverageSessionHTML(index, selectedType, mlVal) {
+            const opts = BEVERAGE_TYPES.map(t =>
+                '<option value="' + t + '"' + (selectedType === t ? ' selected' : '') + '>' + t + '</option>'
+            ).join('');
+            const ml = mlVal != null ? mlVal : '';
+            return '<div class="ex-session" data-bev-index="' + index + '">' +
+                '<span class="session-label">第' + (index+1) + '杯</span>' +
+                '<select>' + opts + '</select>' +
+                '<input type="number" min="50" max="2000" step="50" placeholder="毫升" value="' + ml + '">' +
+                '<span style="font-size:13px;color:#aaa;">ml</span>' +
+                (index >= 1 ? '<button class="close-btn" onclick="removeBeverageSession(this)" title="删除">✕</button>' : '') +
+                '</div>';
+        }
+        function renderBeverageSessions(sessions) {
+            const c = document.getElementById('beverageSessions');
+            const d = sessions || [{ type: '咖啡', ml: null }];
+            beverageCount = d.length;
+            c.innerHTML = d.map((s, i) => createBeverageSessionHTML(i, s.type || s.label, s.ml)).join('');
+        }
+        function addBeverageSession() {
+            if (beverageCount >= MAX_BEVERAGES) return;
+            const c = document.getElementById('beverageSessions');
+            c.insertAdjacentHTML('beforeend', createBeverageSessionHTML(beverageCount, '咖啡', null));
+            beverageCount++;
+        }
+        function removeBeverageSession(b) {
+            const r = b.closest('.ex-session'); r.remove();
+            const all = document.querySelectorAll('#beverageSessions .ex-session');
+            all.forEach((row, i) => { row.dataset.bevIndex = i; row.querySelector('.session-label').textContent = '第' + (i+1) + '杯'; });
+            beverageCount = all.length;
+        }
+        function collectBeverageSessions() {
+            const records = [];
+            document.querySelectorAll('#beverageSessions .ex-session').forEach(r => {
+                const t = r.querySelector('select').value;
+                const ml = r.querySelector('input').value;
+                if (ml) records.push({type: t, ml: +ml, label: t});
+            });
+            return records;
         }
 
 </script>
